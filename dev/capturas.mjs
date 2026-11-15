@@ -46,7 +46,10 @@ const SCREENS = {
   resTri: async p => { await p.click('#tab-tri'); },
   glosario: async p => { await p.click('#tab-mbti'); await p.locator('#mbti .ph .term').first().click(); },
   lista: async p => { await p.keyboard.press('Escape'); await p.click('[data-act=review]'); },
-  editar: async p => { await p.locator('.row').first().click(); }
+  editar: async p => { await p.locator('.row').first().click(); },
+  historial: async p => { await p.evaluate(() => localStorage.setItem('mapa-personalidad-historial', JSON.stringify([{fecha: '2026-10-03T09:00:00Z', mbti: 'INTJ', enea: '6w5', inst: 'so/sx', tri: '614'}]))); await p.goto(URL); },
+  comparar: async p => { await p.fill('#cmpIn', 'ENFP · 7w6 · sx/so · 729'); await p.click('[data-act=compare]'); await p.locator('#cmpOut').scrollIntoViewIfNeeded(); },
+  entradaCodigo: async p => { await p.evaluate(() => localStorage.clear()); await p.goto(URL); await p.click('.dev summary'); await p.locator('#codeIn').scrollIntoViewIfNeeded(); }
 };
 
 const browser = await chromium.launch();

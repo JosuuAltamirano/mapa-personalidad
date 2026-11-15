@@ -62,7 +62,7 @@ const blank=()=>{adopt(fresh(),S&&S.prefs);S.seen={}};
 function saveHist(){   // al repetir: el resultado anterior pasa al historial
   try{
     const R=compute(),h=JSON.parse(localStorage.getItem(HKEY)||'[]');
-    h.push({fecha:S.doneAt||new Date().toISOString(),mbti:R.mbti,enea:`${R.core}w${R.wing}`,inst:R.stack.slice(0,2).join('/'),tri:R.tri.map(x=>x.t).join('')});
+    h.push(Object.assign({fecha:S.doneAt||new Date().toISOString()},nowCodes(R)));
     localStorage.setItem(HKEY,JSON.stringify(h.slice(-20)));
   }catch(e){}
 }
@@ -131,12 +131,13 @@ const app=$('#app');
 function setView(v,html){VIEW=v;cancelAuto();closeBub(false);app.innerHTML=html;app.dataset.view=v}
 
 // ----- Entrada -----
-function showEntrada(focus){
-  const E=T.entrada,started=answeredN()>0;
+function showEntrada(focus,note){
+  const E=T.entrada,D=T.dispositivo,started=answeredN()>0;
   const parts=PARTS.map(p=>{const x=E.partes[p];return`<li>${svg('em',EMB[p])}<span><b>${x.nombre}</b><small>${x.que}</small></span><span class="n">${fill(E.preguntas,{n:x.preguntas})}<br>${fill(E.minutos,{n:x.min})}</span></li>`}).join('');
   setView('entrada',`<div class="in enter">
     <h1 class="disp" tabindex="-1">${T.titulo}</h1>
     <p class="lede">${E.lede}</p>
+    ${note?`<p class="okmsg" role="status">${note}</p>`:''}
     ${CAN_SAVE?'':aviso(T.pregunta.sinGuardar)}
     <section aria-labelledby="hPartes"><h2 class="sr" id="hPartes">${E.partesTitulo}</h2><ul class="parts">${parts}</ul>
     <p class="small" style="margin-top:8px">${E.partesTotal}. ${E.partesNota}</p></section>
@@ -146,6 +147,9 @@ function showEntrada(focus){
     <div class="go">${started?`<button class="btn pri full" data-act="start">${fill(E.continuar,{n:answeredN()+1})}</button>
       <p class="small" style="text-align:center">${fill(E.continuarAyuda,{n:answeredN(),m:totalN()})}</p>
       <button class="btn full" data-act="wipe">${E.deCero}</button>`:`<button class="btn pri full" data-act="start">${E.empezar}</button>`}</div>
+    <details class="dev"><summary>${D.pegarTitulo}</summary><div class="devb"><label for="codeIn" class="small">${D.pegarAyuda}</label>
+      <textarea id="codeIn" rows="3" spellcheck="false" autocomplete="off" autocapitalize="off"></textarea>
+      <button class="btn sm" data-act="loadcode">${D.cargar}</button><p class="small" id="codeMsg" role="status"></p></div></details>
     <p style="text-align:center"><button class="linkbtn" data-act="metodo">${E.queEs}</button></p>
   </div>`);
   if(focus)focusTop($('#app h1'));else window.scrollTo(0,0);
@@ -193,7 +197,8 @@ function paint(){
     const i=+b.dataset.i,pos=Array.isArray(a)?a.indexOf(i):-1;
     b.dataset.s=pos<0?'':pos===0?'1':'2';
     b.setAttribute('aria-pressed',String(pos>=0));
-    b.querySelector('.lt').innerHTML=pos===0?svg('',ICO.check):'ABCD'[i];
+    const want=pos===0?'ok':'ABCD'[i];   // solo se rehace al cambiar, para que la animación de la marca salga una vez
+    if(b.dataset.lt!==want){b.dataset.lt=want;b.querySelector('.lt').innerHTML=pos===0?svg('',ICO.check):'ABCD'[i]}
     b.querySelector('.chip').textContent=pos===1?T.pregunta.tambien:pos===0&&a.length>1?T.pregunta.principal:'';
     const tm=b.querySelector('.timer');if(tm)tm.remove();
     if(pos===0&&TIMER){const s=document.createElement('span');s.className='timer';s.setAttribute('aria-hidden','true');s.style.setProperty('--auto-ms',AUTO_MS+'ms');b.append(s)}
@@ -352,6 +357,8 @@ function openHelp(){
     <label class="tog"><span><b>${A.auto}</b><small>${A.autoAyuda}</small></span><input type="checkbox" role="switch" class="sw" data-pref="auto"${S.prefs.auto?' checked':''}></label>
     <label class="tog"><span><b>${A.teclas}</b><small>${A.teclasAyuda}</small></span><input type="checkbox" role="switch" class="sw" data-pref="keys"${S.prefs.keys?' checked':''}></label>
     <p class="small">${T.pregunta.teclas}</p>
+    <div class="devc codehost"><h3 class="h3">${T.dispositivo.titulo}</h3><p class="small">${T.dispositivo.explica}</p>
+      <button class="btn sm" data-act="code">${T.dispositivo.copiar}</button><textarea class="codeta" rows="3" readonly hidden aria-label="${T.dispositivo.etiquetaCodigo}"></textarea></div>
     <div class="acts"><button class="btn pri" data-close autofocus>${A.cerrar}</button></div>`);
 }
 function confirmDlg(q,yes,fn){
@@ -377,7 +384,8 @@ const hashOf=k=>TABS.find(t=>t[0]===k)[1];
 const tabOf=h=>{const t=TABS.find(t=>t[1]===String(h||'').replace('#',''));return t?t[0]:null};
 let TAB='mbti';
 const fecha=iso=>new Date(iso).toLocaleDateString('es-ES',{day:'numeric',month:'long',year:'numeric'});
-const codes=R=>`${R.mbti} · ${R.core}w${R.wing} · ${R.stack.slice(0,2).join('/')} · ${R.tri.map(x=>x.t).join('')}`;
+const nowCodes=R=>({mbti:R.mbti,enea:`${R.core}w${R.wing}`,inst:R.stack.slice(0,2).join('/'),tri:R.tri.map(x=>x.t).join('')});
+const codes=R=>Object.values(nowCodes(R)).join(' · ');
 const probOf=(P,k)=>{const r=P.find(x=>String(x[0])===String(k));return r?r[1]:0};
 const bars=(rows,cls)=>`<ul class="pbs${cls?' '+cls:''}">${rows.map(([k,v,on])=>`<li class="pb${on?' on':''}"><span class="k">${k}</span><span class="t" aria-hidden="true"><i style="width:${Math.max(1,pc(v))}%"></i></span><span class="v">${pct(v)}</span></li>`).join('')}</ul>`;
 const cchip=p=>`<span class="cchip"><i aria-hidden="true"></i>${T.resultados.confianza[confidence(p)]} · ${pct(p)}</span>`;
@@ -397,17 +405,22 @@ function showRes(o={}){
   const R=compute(),RS=T.resultados;
   save();
   if(!o.keep)TAB=tabOf(location.hash)||TAB;
-  setView('res',`<div class="res">
+  setView('res',`<div class="res${o.keep?'':' anim'}">
     ${posterHTML(R,R0)}
     <div class="tabs" role="tablist" aria-label="${RS.pestanasNombre}">${TABS.map(([k,h])=>`<button type="button" role="tab" id="tab-${k}" data-tab="${k}" aria-controls="${h}" aria-selected="false" tabindex="-1">${RS.pestanas[k]}</button>`).join('')}</div>
     ${panel('mbti',panelMbti(R,R0))}${panel('enea',panelEnea(R,R0))}${panel('inst',panelInst(R,R0))}${panel('tri',panelTri(R))}
+    <section class="extra" aria-labelledby="hCmp"><h2 class="disp" id="hCmp">${T.comparar.titulo}</h2><p class="small">${T.comparar.ayuda}</p>
+      <label class="small" for="cmpIn">${T.comparar.etiqueta}</label><textarea id="cmpIn" rows="4" spellcheck="false" autocomplete="off"></textarea>
+      <button type="button" class="btn sm" data-act="compare">${T.comparar.boton}</button><div id="cmpOut" class="cmpout" aria-live="polite"></div></section>
     <section class="metodo" id="como-se-calcula" aria-labelledby="hMet"><h2 class="disp" id="hMet" tabindex="-1">${T.metodo.titulo}</h2>${T.metodo.parrafos.map(x=>`<p>${marks(x)}</p>`).join('')}</section>
-    <footer class="rfoot"><button class="btn" data-act="again">${RS.acciones.repetir}</button></footer>
+    <footer class="rfoot codehost"><div class="acts"><button class="btn" data-act="print">${T.imprimir}</button><button class="btn" data-act="code">${T.dispositivo.copiarLargo}</button><button class="btn" data-act="again">${RS.acciones.repetir}</button></div>
+      <textarea class="codeta" rows="3" readonly hidden aria-label="${T.dispositivo.etiquetaCodigo}"></textarea></footer>
   </div>`);
   selectTab(TAB,{hash:false});
-  if(!o.keep){focusTop($('#app h1'));say(`${T.titulo}: ${codes(R)}`)}
+  if(!o.keep){focusTop($('#app h1'));say(`${T.titulo}: ${codes(R)}`);const r=$('#app .res');setTimeout(()=>r.classList.remove('anim'),1600)}
 }
-const panel=(k,html)=>`<section class="panel" role="tabpanel" id="${hashOf(k)}" aria-labelledby="tab-${k}" hidden>${html}</section>`;
+const panel=(k,html)=>`<section class="panel" role="tabpanel" id="${hashOf(k)}" aria-labelledby="tab-${k}" hidden>${html}${redoBtn(k)}</section>`;
+const redoBtn=k=>{const RP=T.repetirParte;return k==='tri'?`<p class="small pfoot">${RP.nota}</p>`:`<div class="pfoot"><button type="button" class="btn sm" data-act="redo" data-part="${k}">${fill(RP.boton,{parte:RP.partes[k]})}</button></div>`};
 function selectTab(k,o={}){
   TAB=k;
   TABS.forEach(([t,h])=>{const b=$('#tab-'+t),p=$('#'+h),on=t===k;b.setAttribute('aria-selected',String(on));b.tabIndex=on?0:-1;p.hidden=!on});
@@ -418,10 +431,13 @@ function selectTab(k,o={}){
 
 // ----- Póster -----
 function posterHTML(R,R0){
-  const RS=T.resultados,A=RS.acciones,N=RS.pestanas;
+  const RS=T.resultados,A=RS.acciones,N=RS.pestanas,H=T.historial,prev=lastHist(),now=nowCodes(R),diff=prev?Object.keys(now).filter(k=>prev[k]!==now[k]):[];
   const cell=(sys,code,name,P,test)=>`<li class="cell"><span class="k">${N[sys]}</span><span class="disp code">${code}</span><span class="nm">${name}</span>${
     !P?'':R.chosen[sys]?`${pickChip()}<span class="alt">${fill(RS.elRestoDelTest,{tipo:test,p:pc(P[0][1])})}</span>`
-      :`${cchip(P[0][1])}<span class="alt">${fill(RS.o,{tipo:P[1][0],p:pc(P[1][1])})}</span>`}</li>`;
+      :`${cchip(P[0][1])}<span class="alt">${fill(RS.o,{tipo:P[1][0],p:pc(P[1][1])})}</span>`}${
+    diff.includes(sys)?`<span class="alt antes">${fill(H.antes,{tipo:prev[sys]})}</span>`:''}</li>`;
+  const hist=!prev?'':`<p class="hist">${fill(H.otraVez,{fecha:fecha(prev.fecha),codigos:Object.keys(now).map(k=>prev[k]).join(' · ')})} ${
+    !diff.length?H.igual:fill(diff.length>1||diff[0]==='inst'?H.cambiaN:H.cambia1,{lista:joinY(diff.map(k=>H.nombres[k]))})}</p>`;
   const tk=TRI[R.triKey];
   return`<header class="field poster" id="poster"><div class="w">
     <h1 class="disp" tabindex="-1">${T.titulo}</h1>
@@ -432,7 +448,8 @@ function posterHTML(R,R0){
       ${cell('inst',R.stack.slice(0,2).join('/'),`Subtipo ${R.core} ${INSN[R.stack[0]].split(' ')[0]}`,R0.PI,R0.stack.slice(0,2).join('/'))}
       ${cell('tri',R.tri.map(x=>x.t).join(''),tk.slice(0,tk.indexOf(':')),null)}
     </ul>
-    <div class="acts"><button class="btn w" data-act="share">${A.compartir}</button><button class="btn" data-act="copy">${A.copiar}</button><button class="btn" data-act="review">${A.revisar}</button></div>
+    ${hist}
+    <div class="acts"><button class="btn light" data-act="share">${A.compartir}</button><button class="btn" data-act="copy">${A.copiar}</button><button class="btn" data-act="review">${A.revisar}</button></div>
     <a class="howlink" href="#como-se-calcula" data-act="how">${A.comoSeCalcula}</a>
     <textarea id="copyta" rows="8" readonly hidden aria-label="${A.copiar}"></textarea>
   </div></header>`;
@@ -646,6 +663,143 @@ async function posterPNG(){
   return new Promise((ok,ko)=>cv.toBlob(b=>b?ok(b):ko(new Error('toBlob')),'image/png'));
 }
 
+// ======= Seguir en otro dispositivo =======
+// El código es el estado comprimido (deflate) en base64. Las preguntas generadas viajan solo como claves y se rehacen
+// con los textos de data.js al cargarlas: un código no puede meter textos ajenos en la página.
+const own=(o,k)=>o!=null&&Object.prototype.hasOwnProperty.call(o,k);
+const b64u=u8=>{let s='';for(let i=0;i<u8.length;i+=0x8000)s+=String.fromCharCode.apply(null,u8.subarray(i,i+0x8000));return btoa(s).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'')};
+const unb64u=s=>{s=s.replace(/-/g,'+').replace(/_/g,'/');while(s.length%4)s+='=';const b=atob(s),u=new Uint8Array(b.length);for(let i=0;i<b.length;i++)u[i]=b.charCodeAt(i);return u};
+const pipe=async(u8,stream)=>new Uint8Array(await new Response(new Blob([u8]).stream().pipeThrough(stream)).arrayBuffer());
+async function packState(){
+  const gen={};for(const[id,g]of Object.entries(S.gen))gen[id]=[g.blk,...g.o.map(o=>o[1])];
+  const raw=new TextEncoder().encode(JSON.stringify({v:1,ans:S.ans,i:S.i,view:S.view,seq:S.seq,gen,prefs:S.prefs,seen:S.seen,choice:S.choice,pace:S.pace,doneAt:S.doneAt}));
+  try{return'z'+b64u(await pipe(raw,new CompressionStream('deflate-raw')))}catch(e){return'j'+b64u(raw)}
+}
+async function unpackState(code){
+  code=String(code).replace(/\s+/g,'');
+  if(!/^[zj][A-Za-z0-9_-]{8,20000}$/.test(code))throw new Error('codigo');
+  let bytes;try{bytes=unb64u(code.slice(1))}catch(e){throw new Error('codigo')}
+  if(code[0]==='z'){
+    let ds;try{ds=new DecompressionStream('deflate-raw')}catch(e){throw new Error('soporte')}
+    try{bytes=await pipe(bytes,ds)}catch(e){throw new Error('codigo')}
+  }
+  let o;try{o=JSON.parse(new TextDecoder().decode(bytes))}catch(e){throw new Error('codigo')}
+  return cleanState(o);
+}
+const KEYOK={TBF:k=>own(FN,k),TBEI:k=>k==='E'||k==='I',TBE:k=>Number.isInteger(k)&&k>=1&&k<=9,WG:k=>Number.isInteger(k)&&k>=1&&k<=9,TBI:k=>k==='sp'||k==='so'||k==='sx'};
+const GENBLK={tm:['TBF','TBEI'],te:['TBE'],tw:['WG'],ti:['TBI']},GENPART={tm:'mbti',te:'enea',tw:'enea',ti:'inst'};
+// Rehace una pregunta generada (desempate o ala) a partir de su id, su bloque y las claves de sus dos opciones.
+function rebuildGen(id,blk,keys){
+  const m=/^(tm|te|tw|ti)([1-6])$/.exec(id);
+  if(!m||!GENBLK[m[1]].includes(blk)||!Array.isArray(keys)||keys.length!==2||keys[0]===keys[1]||!keys.every(KEYOK[blk]))return null;
+  const i=+m[2]-1,x=blk==='TBEI'?EIBANK[i]:blk==='TBF'?FBANK[i]:blk==='TBE'?EBANK[i]:blk==='WG'?EBANK[[1,3,4][i]]:IBANK[i];
+  if(!x)return null;
+  const o=keys.map(k=>[blk==='TBEI'?x[k]:x.t[k],k]);
+  return o.every(([t])=>typeof t==='string')?{id,part:GENPART[m[1]],blk,q:x.q,o}:null;
+}
+const SEENOK=/^(mbti|enea|inst|C|IB|WG|tb_(mbti|enea|inst)|p_(mbti|enea))$/,MARKS=['#mbti','#enea','#wing','#inst'];
+function cleanState(o){
+  const bad=()=>{throw new Error('codigo')};
+  if(!o||typeof o!=='object'||o.v!==1||!Array.isArray(o.seq)||!o.ans||typeof o.ans!=='object')bad();
+  const gen={};
+  for(const[id,v]of Object.entries(o.gen&&typeof o.gen==='object'?o.gen:{})){const g=Array.isArray(v)&&rebuildGen(id,v[0],v.slice(1));if(!g)bad();gen[id]=g}
+  const known=id=>typeof id==='string'&&(MARKS.includes(id)||own(ITEMS,id)||own(gen,id));
+  if(!o.seq.every(known)||new Set(o.seq).size!==o.seq.length||BASE.some(id=>real(id)&&!o.seq.includes(id)))bad();
+  const ans={};
+  for(const id of o.seq){
+    if(!own(o.ans,id))continue;
+    const a=o.ans[id],it=own(ITEMS,id)?ITEMS[id]:gen[id];
+    if(!it||!Array.isArray(a)||a.length>2||new Set(a).size!==a.length||!a.every(n=>Number.isInteger(n)&&n>=0&&n<it.o.length))bad();
+    ans[id]=a.slice();
+  }
+  const seen={};if(o.seen&&typeof o.seen==='object')for(const k of Object.keys(o.seen))if(SEENOK.test(k))seen[k]=1;
+  const c=o.choice&&typeof o.choice==='object'?o.choice:{},choice={};
+  if(typeof c.mbti==='string'&&own(T16K,c.mbti))choice.mbti=c.mbti;
+  if(Number.isInteger(c.enea)&&c.enea>=1&&c.enea<=9)choice.enea=c.enea;
+  if(typeof c.inst==='string'&&own(STACK,c.inst))choice.inst=c.inst;
+  const x={ans,seq:o.seq.slice(),gen,i:Number.isInteger(o.i)?o.i:0,view:o.view==='res'?'res':'quiz',seen,choice,
+    prefs:{auto:!(o.prefs&&o.prefs.auto===false),keys:!(o.prefs&&o.prefs.keys===false)},
+    pace:Array.isArray(o.pace)?o.pace.filter(n=>typeof n==='number'&&n>0&&n<3600):[]};
+  if(typeof o.doneAt==='string'&&o.doneAt.length<40&&!isNaN(Date.parse(o.doneAt)))x.doneAt=o.doneAt;
+  return x;
+}
+async function copyCode(b){
+  const D=T.dispositivo,ta=b.closest('.codehost').querySelector('.codeta');let code;
+  try{code=await packState()}catch(e){flash(b,T.compartir.error);return}
+  try{await navigator.clipboard.writeText(code);flash(b,D.copiado)}
+  catch(e){ta.hidden=false;ta.value=code;ta.focus();ta.select();flash(b,D.copiaManual)}
+}
+async function loadCode(){
+  const D=T.dispositivo,inp=$('#codeIn'),msg=$('#codeMsg'),v=inp.value.trim();
+  if(!v){inp.focus();return}
+  let x;try{x=await unpackState(v)}catch(e){msg.textContent=e.message==='soporte'?D.sinSoporte:D.invalido;return}
+  const go=()=>{REV=false;adopt(x);if(S.view==='res'&&firstUn()>=0)S.view='quiz';save();if(S.view==='res'){showRes();say(D.cargado)}else showEntrada(true,D.cargado)};
+  if(answeredN()>0)confirmDlg(D.sustituir,D.sustituirSi,go);else go();
+}
+
+// ======= Historial =======
+const HOK={mbti:/^[EI][NS][TF][JP]$/,enea:/^[1-9]w[1-9]$/,inst:/^(sp|so|sx)\/(sp|so|sx)$/,tri:/^[1-9]{3}$/};
+function lastHist(){
+  try{
+    const h=JSON.parse(localStorage.getItem(HKEY)||'[]'),e=Array.isArray(h)&&h[h.length-1];
+    return e&&Object.keys(HOK).every(k=>typeof e[k]==='string'&&HOK[k].test(e[k]))&&typeof e.fecha==='string'&&!isNaN(Date.parse(e.fecha))?e:null;
+  }catch(e){return null}
+}
+const joinY=a=>a.length<2?a.join(''):a.slice(0,-1).join(', ')+' y '+a[a.length-1];
+
+// ======= Repetir una parte =======
+// Borra las respuestas de la parte y sus preguntas generadas, vuelve a poner sus marcadores en su sitio
+// (las otras partes conservan sus desempates y su ala) y lleva a su primera pregunta.
+const GENP={'#mbti':'tm','#enea':'te','#wing':'tw','#inst':'ti'};
+const PMARK={mbti:['#mbti'],enea:['#enea','#wing'],inst:['#inst']};
+const PSEEN={mbti:['mbti','C','tb_mbti','p_mbti'],enea:['enea','tb_enea','WG','p_enea'],inst:['inst','IB','tb_inst']};
+function redoPart(p){
+  if(firstUn()<0)saveHist();
+  const seq=[];
+  for(const id of BASE){
+    if(real(id)||PMARK[p].includes(id)){seq.push(id);continue}
+    if(S.seq.includes(id))seq.push(id);else seq.push(...S.seq.filter(x=>x.startsWith(GENP[id])));
+  }
+  for(const id of S.seq){const it=item(id);if(it&&it.part===p){delete S.ans[id];if(own(S.gen,id))delete S.gen[id]}}
+  S.seq=seq;PSEEN[p].forEach(k=>{delete S.seen[k]});
+  S.choice=Object.assign({},S.choice);delete S.choice[p];
+  delete S.doneAt;S.view='quiz';REV=false;
+  S.i=S.seq.findIndex(id=>real(id)&&item(id).part===p);
+  try{history.replaceState(null,'',location.pathname+location.search)}catch(e){}
+  arrive();
+}
+
+// ======= Comparar con otra persona =======
+// Del texto pegado solo se toman los códigos que encajan con sus patrones: nada de él se pinta tal cual.
+function parseOther(t){
+  const s=String(t||'').slice(0,20000);
+  const m=s.match(/\b([EI][NS][TF][JP])\s*·\s*([1-9])w([1-9])\s*·\s*(sp|so|sx)\/(sp|so|sx)\s*·\s*([1-9]{3})\b/);
+  let o=m&&{mbti:m[1],enea:`${m[2]}w${m[3]}`,inst:`${m[4]}/${m[5]}`,tri:m[6]};
+  if(!o){   // texto de la versión anterior: líneas «MBTI: INTP 52 %…», «Eneagrama: 6w5 (…)», «Instintos: so/sx…», «Tritipo: 613 (…)»
+    const a=s.match(/MBTI:\s*([EI][NS][TF][JP])\b/),b=s.match(/Eneagrama:\s*([1-9])w([1-9])\b/),c=s.match(/Instintos:\s*(sp|so|sx)\/(sp|so|sx)\b/),d=s.match(/Tritipo:\s*([1-9]{3})\b/);
+    if(a&&b&&c&&d)o={mbti:a[1],enea:`${b[1]}w${b[2]}`,inst:`${c[1]}/${c[2]}`,tri:d[1]};
+  }
+  return o&&own(STACK,o.inst)?o:null;
+}
+function compareWith(){
+  const C=T.comparar,N=T.resultados.pestanas,out=$('#cmpOut'),o=parseOther($('#cmpIn').value);
+  if(!o){out.innerHTML=`<p class="small">${C.invalido}</p>`;return}
+  const me=nowCodes(compute()),keys=['mbti','enea','inst','tri'],cap=x=>x[0].toUpperCase()+x.slice(1);
+  const name={mbti:t=>T16[t].n,enea:t=>`${eName(+t[0])}, ala ${t[2]}`,inst:t=>`${cap(INSN[t.slice(0,2)].split(' ')[0])} y ${INSN[t.slice(3)].split(' ')[0]}`,
+    tri:t=>{const v=TRI[t.split('').sort().join('')];return v?v.slice(0,v.indexOf(':')):''}};
+  const near=k=>{
+    if(me[k]===o[k])return C.coincide;
+    if(k==='mbti'){const n=[...me.mbti].filter((l,i)=>l===o.mbti[i]).length;return n?fill(C.letras,{n}):''}
+    if(k==='enea'&&me.enea[0]===o.enea[0])return C.mismoEneatipo;
+    if(k==='inst'&&me.inst.slice(0,2)===o.inst.slice(0,2))return C.mismoDominante;
+    return '';
+  };
+  const td=(k,v)=>`<td><b class="disp">${v}</b><small>${name[k](v)}</small></td>`;
+  out.innerHTML=`<p class="cmpres">${fill(C.resumen,{n:keys.filter(k=>me[k]===o[k]).length})}</p>
+    <table class="cmp"><thead><tr><th scope="col">${C.sistema}</th><th scope="col">${C.tu}</th><th scope="col">${C.otra}</th></tr></thead>
+    <tbody>${keys.map(k=>{const t=near(k);return`<tr><th scope="row">${N[k]}${t?`<span class="tag ${me[k]===o[k]?'ink':'soft'}">${t}</span>`:''}</th>${td(k,me[k])}${td(k,o[k])}</tr>`}).join('')}</tbody></table>`;
+}
+
 // ======= Burbuja del glosario =======
 let BUB_OPENER=null;
 function openTerm(btn){
@@ -704,6 +858,11 @@ document.addEventListener('click',e=>{
   else if(a==='choose')choose(b.dataset.sys,b.dataset.v);
   else if(a==='unchoose')unchoose(b.dataset.sys);
   else if(a==='bubclose')closeBub(true);
+  else if(a==='code')copyCode(b);
+  else if(a==='loadcode')loadCode();
+  else if(a==='redo'){const p=b.dataset.part,RP=T.repetirParte;confirmDlg(fill(RP.pregunta,{parte:RP.partes[p]}),RP.si,()=>redoPart(p))}
+  else if(a==='print')window.print();
+  else if(a==='compare')compareWith();
   else if(a==='again')confirmDlg(T.resultados.repetirPregunta,T.resultados.repetirSi,()=>{
     if(firstUn()<0)saveHist();
     try{history.replaceState(null,'',location.pathname+location.search)}catch(e){}

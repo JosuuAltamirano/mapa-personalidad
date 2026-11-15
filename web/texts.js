@@ -183,6 +183,60 @@ const TEXTOS = {
 
   glosario: {cerrar: 'Cerrar'},
 
+  // Prioridad 3
+  dispositivo: {
+    titulo: 'Seguir en otro dispositivo',
+    explica: 'Copia un código con tus respuestas y pégalo en la entrada del test en el otro dispositivo. No lleva datos personales.',
+    copiar: 'Copiar código',
+    copiarLargo: 'Copiar código para otro dispositivo',
+    copiado: 'Código copiado',
+    copiaManual: 'Cópialo del recuadro',
+    etiquetaCodigo: 'Código con tus respuestas',
+    pegarTitulo: '¿Empezaste en otro dispositivo?',
+    pegarAyuda: 'Pega aquí el código que copiaste allí.',
+    cargar: 'Cargar mis respuestas',
+    sustituir: '¿Cambiar las respuestas de este dispositivo por las del código?',
+    sustituirSi: 'Sí, cambiarlas',
+    cargado: 'Listo: ya tienes aquí tus respuestas.',
+    invalido: 'Ese código no es válido. Cópialo otra vez y pégalo entero.',
+    sinSoporte: 'Este navegador no puede leer el código. Prueba con uno más reciente.'
+  },
+
+  historial: {
+    otraVez: 'La otra vez, el {fecha}: {codigos}.',
+    igual: 'Te ha salido lo mismo.',
+    cambia1: 'Esta vez cambia {lista}.',
+    cambiaN: 'Esta vez cambian {lista}.',
+    antes: 'Antes: {tipo}',
+    nombres: {mbti: 'el MBTI', enea: 'el eneagrama', inst: 'los instintos', tri: 'el tritipo'}
+  },
+
+  repetirParte: {
+    boton: 'Repetir la parte de {parte}',
+    pregunta: '¿Repetir la parte de {parte}? Se borrarán sus respuestas; las de las otras partes se quedan.',
+    si: 'Sí, repetir esta parte',
+    partes: {mbti: 'MBTI', enea: 'eneagrama', inst: 'instintos'},
+    nota: 'El tritipo sale de tus respuestas del eneagrama: para repetirlo, repite esa parte.'
+  },
+
+  imprimir: 'Imprimir o guardar en PDF',
+
+  comparar: {
+    titulo: 'Comparar con otra persona',
+    ayuda: 'Pídele que pulse «Copiar texto» en sus resultados y pega aquí lo que te pase: verás vuestros dos mapas lado a lado. No se envía a ningún sitio.',
+    etiqueta: 'Texto de la otra persona',
+    boton: 'Comparar',
+    sistema: 'Sistema',
+    tu: 'Tú',
+    otra: 'La otra persona',
+    coincide: 'Coincidís',
+    letras: '{n} de 4 letras en común',
+    mismoEneatipo: 'Mismo eneatipo',
+    mismoDominante: 'Mismo instinto dominante',
+    resumen: 'Coincidís en {n} de 4.',
+    invalido: 'No encuentro un resultado en ese texto. Pídele que use «Copiar texto» y pégalo entero.'
+  },
+
   compartir: {
     pie: 'Tu mapa de personalidad',
     archivo: 'mi-mapa-de-personalidad.png',
