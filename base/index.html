@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tu mapa de personalidad</title>
+<link rel="preload" href="fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="band top" id="qtop">
+  <div class="wrap">
+    <h1>Tu mapa de personalidad</h1>
+    <p class="lede">MBTI, eneagrama, instintos y tritipo a partir de cosas que has vivido: unas 110 situaciones, entre 35 y 45 minutos. Contesta por lo que hiciste, no por lo que te gustaría hacer. Si dos opciones te describen, puedes marcar las dos.</p>
+    <ol class="rail" id="rail" aria-label="Progreso por partes"></ol>
+  </div>
+</header>
+<main>
+  <section class="band qz" id="quiz">
+    <div class="wrap"><article class="card" id="card" tabindex="-1" aria-live="polite"></article></div>
+  </section>
+  <section id="res" hidden>
+    <header class="band rh">
+      <div class="wrap">
+        <h1>Tu mapa de personalidad</h1>
+        <p class="rsum" id="rsum"></p>
+        <div class="codes" id="codes"></div>
+        <div class="acts">
+          <button class="btn go" data-act="copy">Copiar resultados</button>
+          <button class="btn" data-act="review">Revisar respuestas</button>
+          <button class="btn" data-act="again">Repetir el test</button>
+        </div>
+        <div class="cf" id="cf" hidden>
+          <p>¿Borrar tus respuestas y empezar de cero?</p>
+          <button class="btn go" data-act="wipe">Sí, empezar de cero</button>
+          <button class="btn" data-act="no">Cancelar</button>
+        </div>
+        <textarea id="copyta" rows="8" readonly hidden aria-label="Resultados para copiar"></textarea>
+      </div>
+    </header>
+    <section class="band sec"><div class="wrap sg">
+      <div><div class="letters" id="mbL"></div><div id="mbP"></div></div>
+      <div class="txt" id="mbT"></div>
+    </div></section>
+    <section class="band sec"><div class="wrap sg">
+      <div><div class="fig"><svg id="fgE" role="img" aria-label="Símbolo del eneagrama: cada punto crece según la probabilidad de ese tipo"></svg></div><p class="leg" id="enLeg"></p></div>
+      <div class="txt" id="enT"></div>
+    </div></section>
+    <section class="band sec"><div class="wrap sg">
+      <div class="fig"><svg id="fgI" role="img" aria-label="Tus tres instintos, con un tamaño según cuánto los eliges"></svg></div>
+      <div class="txt" id="inT"></div>
+    </div></section>
+    <section class="band sec"><div class="wrap sg">
+      <div class="fig"><svg id="fgT" role="img" aria-label="Tu tritipo marcado como un triángulo sobre el eneagrama"></svg></div>
+      <div class="txt" id="trT"></div>
+    </div></section>
+    <footer class="band foot"><div class="wrap">
+      <p>Cómo se calcula: para cada tipo posible, el test estima la probabilidad de que alguien así diera tus respuestas, y los porcentajes están calibrados para que signifiquen lo que dicen. Si dos resultados quedan cerca, añade preguntas de desempate. En simulaciones con decenas de miles de personas virtuales acierta el tipo MBTI un 63 % de las veces (77 % con desempate), el eneatipo un 87 % (91 %) y el instinto dominante un 87 %. Son cifras de simulación: con personas reales dependen de lo bien que funcione cada pregunta.</p>
+      <p>Un test de autoconocimiento, no un diagnóstico. No es el MBTI® oficial de The Myers-Briggs Company ni una prueba clínica. Los grupos del eneagrama siguen a Don Riso y Russ Hudson; los subtipos, a Claudio Naranjo; el concepto de tritipo es de Katherine Chernick Fauvre. Si algo no te encaja, lee también los resultados que han quedado cerca.</p>
+      <div class="acts"><button class="btn" data-act="copy">Copiar resultados</button><button class="btn" data-act="again">Repetir el test</button></div>
+    </div></footer>
+  </section>
+</main>
+<script src="data.js"></script>
+<script src="texts.js"></script>
+<script src="model.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

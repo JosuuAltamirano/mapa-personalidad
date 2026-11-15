@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bocetos · Tu mapa de personalidad</title>
+<style>
+/* Bocetos estáticos de la nueva interfaz (datos de ejemplo). Sirven de referencia visual: tokens, componentes y
+   proporciones. Los marcos imitan un móvil de 390×844; el último, un portátil de 1280×800. */
+@font-face{font-family:Archivo;src:url(../base/fonts/archivo-latin.woff2) format('woff2');font-weight:100 900;font-stretch:62% 125%;font-display:swap}
+:root{color-scheme:light}
+.phone,.desk{
+  --paper:light-dark(#faf7f2,#12142a);--surface:light-dark(#ffffff,#1b1e3a);
+  --ink:light-dark(#1b1f3b,#f1eff8);--ink2:light-dark(#555a70,#b3b6cc);
+  --line:light-dark(#82869c,#7a7fa3);--hair:light-dark(#e6e1d8,#2c3052);
+  --blue:light-dark(#0067a8,#6cb4f5);--on-blue:light-dark(#ffffff,#12142a);--bluet:light-dark(#e1eef7,#1f3157);
+  --pink:light-dark(#f23d9f,#ff6fc0);--pinkt:light-dark(#ffe2f1,#3d1f3f);
+  --yel:light-dark(#ffe14d,#f5d02e);--yelt:light-dark(#fff4bf,#3a3216);
+  --on-accent:#1b1f3b;--field:light-dark(#0067a8,#17406f);--timer:light-dark(#6cb4f5,#0067a8)}
+.dark{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:#d9d6cf;font:16px/1.55 Archivo,system-ui,sans-serif;color:#1b1f3b}
+.sheet{padding:32px 24px 48px}
+.sheet>h1{font:800 30px/1.1 Archivo;font-stretch:125%;margin:0 0 6px;letter-spacing:-.02em}
+.sheet>p{margin:0 0 24px;color:#4a4f63;max-width:70ch}
+.grid{display:flex;flex-wrap:wrap;gap:28px;align-items:flex-start}
+figure{margin:0}
+figcaption{font:600 15px/1.3 Archivo;margin:10px 4px 0;color:#2b2f45;max-width:390px}
+figcaption span{display:block;font-weight:400;color:#4a4f63;font-size:14px}
+.phone{width:390px;height:844px;border-radius:34px;overflow:hidden;position:relative;background:var(--paper);color:var(--ink);box-shadow:0 0 0 1px #b9b4aa}
+.desk{width:1280px;height:800px;border-radius:14px;overflow:hidden;position:relative;background:var(--paper);color:var(--ink);box-shadow:0 0 0 1px #b9b4aa}
+p{margin:0}
+button{font:inherit;color:inherit}
+.disp{font-stretch:125%;font-weight:820;letter-spacing:-.02em;line-height:1.05}
+/* barra superior */
+.appbar{display:grid;grid-template-columns:44px minmax(0,1fr) 44px;align-items:center;height:56px;padding:0 8px}
+.ib{width:44px;height:44px;border-radius:50%;border:0;background:transparent;display:grid;place-items:center;cursor:pointer}
+.ib svg{width:22px;height:22px;stroke:var(--ink);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.where{display:flex;align-items:center;justify-content:center;gap:8px;font-size:15px}
+.where b{font-weight:700}
+.where span{color:var(--ink2);font-variant-numeric:tabular-nums}
+.em{width:22px;height:22px;flex:none;stroke:var(--ink);fill:none;stroke-width:1.6;stroke-linejoin:round}
+.em .t{fill:var(--ink);fill-opacity:.18;stroke:none}
+.prog{display:flex;gap:4px;padding:0 16px}
+.prog i{display:block;height:4px;border-radius:2px;background:var(--hair);overflow:hidden}
+.prog i b{display:block;height:100%;background:var(--blue)}
+.left{font-size:13px;color:var(--ink2);text-align:center;margin-top:6px}
+/* pregunta */
+.q{padding:18px 16px 120px;display:grid;gap:14px}
+.ctx{font-size:14px;color:var(--ink2)}
+.stmt{font-size:22px;line-height:1.25;font-weight:620;letter-spacing:-.01em;text-wrap:pretty}
+.opts{display:grid;gap:10px}
+.op{display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:12px;align-items:center;min-height:56px;padding:12px 14px;background:var(--surface);border:1.5px solid var(--line);border-radius:14px;text-align:left;font-size:16px;line-height:1.4;font-weight:500;position:relative;overflow:hidden;width:100%}
+.lt{width:28px;height:28px;border-radius:50%;border:1.5px solid var(--line);display:grid;place-items:center;font-size:13px;font-weight:700;color:var(--ink2)}
+.lt svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+.op.sel{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.op.sel .lt{background:var(--paper);color:var(--ink);border-color:var(--paper)}
+.op.also{border:2px solid var(--ink);padding:11.5px 13.5px}
+.op.also .lt{border-color:var(--ink);color:var(--ink)}
+.chip{display:inline-flex;align-items:center;height:24px;padding:0 9px;border-radius:999px;border:1.5px solid currentColor;font-size:13px;font-weight:700;white-space:nowrap}
+.op.sel .chip{border-color:var(--paper)}
+.timer{position:absolute;left:0;bottom:0;height:4px;background:var(--timer)}
+.aviso{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:12px;background:var(--yelt);border:1.5px solid var(--yel);font-size:15px;font-weight:600;line-height:1.35}
+.aviso svg{width:20px;height:20px;flex:none;margin-top:1px;stroke:var(--ink);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+/* barra inferior */
+.bar{position:absolute;left:0;right:0;bottom:0;padding:12px 16px 26px;background:var(--paper);border-top:1px solid var(--hair);display:flex;justify-content:space-between;align-items:center;gap:12px}
+.btn{min-height:48px;padding:0 20px;border-radius:999px;border:1.5px solid var(--ink);background:transparent;font-weight:650;font-size:16px;display:inline-flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;white-space:nowrap}
+.btn.pri{background:var(--blue);border-color:var(--blue);color:var(--on-blue)}
+.btn.ghost{border-color:transparent;padding:0 10px;color:var(--ink2);text-decoration:underline;text-underline-offset:4px;font-weight:600}
+.btn.full{width:100%}
+.btn[disabled]{opacity:.4}
+/* entrada */
+.in{padding:30px 20px 24px;display:grid;gap:16px;height:100%;align-content:start}
+.in h1{font-size:38px;margin:0}
+.lede{font-size:17px;color:var(--ink2)}
+.parts{list-style:none;margin:0;padding:0;display:grid;border-top:1px solid var(--hair)}
+.parts li{display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:12px;align-items:center;padding:11px 0;border-bottom:1px solid var(--hair)}
+.parts .em{width:28px;height:28px}
+.parts b{display:block;font-weight:700}
+.parts small{display:block;font-size:14px;color:var(--ink2)}
+.parts .n{font-size:14px;color:var(--ink2);text-align:right;font-variant-numeric:tabular-nums}
+.how{display:grid;gap:8px;margin:0;padding:0;list-style:none;counter-reset:h}
+.how li{display:grid;grid-template-columns:24px minmax(0,1fr);gap:10px;font-size:15px;line-height:1.4;counter-increment:h}
+.how li::before{content:counter(h);width:24px;height:24px;border-radius:50%;background:var(--ink);color:var(--paper);display:grid;place-items:center;font-size:13px;font-weight:700}
+.h3{font-weight:700;font-size:16px}
+.tog{display:grid;grid-template-columns:minmax(0,1fr) 48px;gap:12px;align-items:center;padding:12px 14px;border-radius:14px;background:var(--surface);border:1.5px solid var(--line)}
+.tog b{font-weight:650;font-size:15px}
+.tog small{display:block;font-size:13px;color:var(--ink2);line-height:1.35}
+.sw{width:48px;height:28px;border-radius:14px;background:var(--blue);position:relative}
+.sw::after{content:"";position:absolute;right:3px;top:3px;width:22px;height:22px;border-radius:50%;background:#fff}
+.priv{font-size:13px;color:var(--ink2);display:flex;gap:8px;align-items:center}
+.priv svg{width:16px;height:16px;stroke:var(--ink2);fill:none;stroke-width:2}
+/* transición */
+.tr{height:100%;display:grid;align-content:center;justify-items:start;gap:16px;padding:32px 24px 120px}
+.tr .big{width:96px;height:96px;stroke:var(--ink);fill:none;stroke-width:1.2}
+.badge{display:inline-flex;height:30px;align-items:center;padding:0 12px;border-radius:999px;background:var(--yel);color:var(--on-accent);font-weight:700;font-size:14px}
+.tr h2{font-size:34px;margin:0}
+.tr p{font-size:17px;max-width:32ch}
+.tr .m{font-size:14px;color:var(--ink2)}
+/* póster */
+.field{background:var(--field);color:#fff;padding:22px 20px 20px}
+.field .k{font-size:14px;color:#fff;opacity:.92}
+.code{font-size:44px;text-shadow:.05em .045em 0 var(--pink)}
+.cells{display:grid;grid-template-columns:1fr 1fr;gap:16px 14px;margin-top:16px;border-top:1.5px solid rgb(255 255 255/.5);padding-top:14px}
+.cell{display:grid;gap:3px;align-content:start}
+.cell .nm{font-size:14px;line-height:1.3}
+.conf{display:inline-flex;align-items:center;gap:6px;height:24px;padding:0 9px;border-radius:999px;background:#fff;color:#1b1f3b;font-size:13px;font-weight:700;justify-self:start;margin-top:3px}
+.conf i{width:8px;height:8px;border-radius:50%;background:var(--pink)}
+.alt{font-size:13px;opacity:.92}
+.acts{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.acts .btn{min-height:44px;font-size:15px;padding:0 16px;border-color:#fff;color:#fff}
+.acts .btn.w{background:#fff;color:#1b1f3b}
+.tabs{display:flex;gap:4px;padding:0 12px;border-bottom:1px solid var(--hair);background:var(--paper)}
+.tabs span{padding:14px 10px 12px;font-weight:650;font-size:15px;color:var(--ink2);border-bottom:3px solid transparent}
+.tabs span.on{color:var(--ink);border-color:var(--ink)}
+.sec{padding:18px 20px;display:grid;gap:12px}
+.sec h2{font-size:24px;margin:0}
+.lets{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.let{border:1.5px solid var(--line);border-radius:14px;padding:10px 6px 10px;display:grid;justify-items:center;gap:4px;background:var(--surface)}
+.let b{font-size:36px}
+.let small{font-size:13px;color:var(--ink2)}
+.mini{width:100%;height:6px;border-radius:3px;background:var(--hair);overflow:hidden}
+.mini i{display:block;height:100%;background:var(--pink)}
+.sm{font-size:14px;color:var(--ink2)}
+/* parcial */
+.part{background:var(--field);color:#fff;padding:26px 22px 26px;display:grid;gap:8px}
+.part .code{font-size:92px;line-height:.95}
+.part .nm{font-size:20px;font-weight:650}
+.part .conf{margin-top:6px}
+/* empate */
+.tie{border:1.5px solid var(--ink);border-radius:16px;background:var(--surface);overflow:hidden}
+.tie header{padding:14px 16px;border-bottom:1px solid var(--hair);display:grid;gap:4px}
+.tie header b{font-size:18px}
+.cols{display:grid;grid-template-columns:1fr 1fr}
+.cols>div{padding:12px 14px;display:grid;gap:8px;align-content:start}
+.cols>div+div{border-left:1px solid var(--hair)}
+.cols .tt{font-size:30px}
+.cols .pp{font-size:13px;font-weight:700}
+.cols .rw{font-size:14px;line-height:1.4}
+.cols .rw small{display:block;font-size:13px;color:var(--ink2);font-weight:600}
+.cols .btn{min-height:44px;font-size:14px;padding:0 12px;white-space:normal;line-height:1.2;text-align:center}
+.mark{display:inline-flex;align-self:start;height:22px;align-items:center;padding:0 8px;border-radius:999px;background:var(--pink);color:var(--on-accent);font-size:13px;font-weight:700;justify-self:start}
+/* escritorio */
+.desk .appbar{max-width:760px;margin:0 auto}
+.desk .prog{max-width:760px;margin:0 auto}
+.desk .q{max-width:720px;margin:0 auto;padding:28px 20px 120px;gap:16px}
+.desk .stmt{font-size:28px}
+.desk .bar{position:static;padding:6px 0 0;border:0;background:none}
+.kbd{font-size:13px;color:var(--ink2)}
+.kbd kbd{font:600 12px/1 Archivo;border:1px solid var(--line);border-radius:5px;padding:2px 5px;margin:0 2px}
+</style>
+</head>
+<body>
+<div class="sheet">
+<h1>Bocetos de la nueva interfaz</h1>
+<p>Referencia visual para el rediseño «del cuaderno al póster». Datos de ejemplo. Los marcos son de 390×844 (móvil) y 1280×800 (portátil); el 4 está en modo oscuro.</p>
+<div class="grid">
+
+<!-- 1 · Entrada -->
+<figure><div class="phone"><div class="in">
+  <h1 class="disp">Tu mapa de personalidad</h1>
+  <p class="lede">Cuatro resultados a partir de cosas que has vivido: tu tipo MBTI, tu eneatipo con su ala, tu orden de instintos y tu tritipo.</p>
+  <ul class="parts">
+    <li><svg class="em" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path class="t" d="M12 3a9 9 0 0 0 0 18z"/><path d="M12 3v18"/></svg><span><b>MBTI</b><small>Cómo piensas y decides</small></span><span class="n">40 preguntas<br>13 min</span></li>
+    <li><svg class="em" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 3 19.8 16.5H4.2Z"/><path d="M17.8 5.1 6.2 18.9 20.9 13.6 3.1 13.6 17.8 18.9 6.2 5.1Z" stroke-width="1"/></svg><span><b>Eneagrama</b><small>Lo que te mueve por dentro</small></span><span class="n">45 preguntas<br>15 min</span></li>
+    <li><svg class="em" viewBox="0 0 24 24"><circle cx="12" cy="8" r="5"/><circle cx="8.2" cy="14.6" r="5"/><circle cx="15.8" cy="14.6" r="5"/></svg><span><b>Instintos</b><small>Dónde pones tu energía</small></span><span class="n">24 preguntas<br>8 min</span></li>
+  </ul>
+  <div><p class="h3" style="margin-bottom:8px">Cómo contestar</p>
+  <ol class="how"><li>Piensa en lo que hiciste de verdad, no en lo que te gustaría hacer.</li><li>Si otra opción también va contigo, tócala después: contará la mitad.</li><li>Si una situación no te ha pasado, sáltala.</li></ol></div>
+  <div class="tog"><span><b>Pasar solo a la siguiente</b><small>Al elegir, avanza en un segundo. En ese tiempo puedes marcar otra.</small></span><span class="sw" role="img" aria-label="Activado"></span></div>
+  <p class="priv"><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Se guarda solo en este navegador. No se envía a ningún sitio.</p>
+  <button class="btn pri full">Empezar</button>
+</div></div><figcaption>1 · Entrada<span>Qué obtienes, cuánto dura, cómo contestar y el aviso del avance automático, con opción de desactivarlo.</span></figcaption></figure>
+
+<!-- 2 · Pregunta -->
+<figure><div class="phone">
+  <div class="appbar"><button class="ib" aria-label="Atrás"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+    <div class="where"><svg class="em" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path class="t" d="M12 3a9 9 0 0 0 0 18z"/><path d="M12 3v18"/></svg><b>MBTI</b><span>12 de 40</span></div>
+    <button class="ib" aria-label="Ayuda"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 0 1 4.8 1c0 1.7-2.3 2-2.3 3.5"/><path d="M12 17.2v.1"/></svg></button></div>
+  <div class="prog"><i style="flex:40"><b style="width:28%"></b></i><i style="flex:45"></i><i style="flex:24"></i></div>
+  <p class="left">Te quedan unos 33 min</p>
+  <div class="q">
+    <p class="ctx">Situaciones en las que tuviste que decidir o juzgar algo.</p>
+    <p class="stmt">Cuando preparabas exámenes importantes (selectividad, carrera, oposiciones)…</p>
+    <div class="opts">
+      <button class="op sel"><span class="lt"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span>Rehacía los apuntes a mi manera hasta que todo me encajaba, aunque tardara más.</span><span class="chip">Principal</span><span class="timer" style="width:62%"></span></button>
+      <button class="op"><span class="lt">B</span><span>Me hacía un calendario con horas por tema y procuraba cumplirlo.</span><span></span></button>
+      <button class="op also"><span class="lt">C</span><span>Me iba mejor estudiar con alguien o explicándoselo a otros.</span><span class="chip">También</span></button>
+      <button class="op"><span class="lt">D</span><span>Me costaba mucho más ponerme con las asignaturas que no me decían nada.</span><span></span></button>
+    </div>
+  </div>
+  <div class="bar"><button class="btn ghost">No me ha pasado</button><button class="btn pri">Siguiente →</button></div>
+</div><figcaption>2 · Pregunta con «principal» y «también»<span>La barra azul de la elegida se vacía en 1,2 s y pasa sola. Cabecera de una línea, progreso por partes y barra inferior fija.</span></figcaption></figure>
+
+<!-- 3 · Transición de bloque -->
+<figure><div class="phone">
+  <div class="appbar"><button class="ib" aria-label="Atrás"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button><div class="where"><b>Instintos</b><span>18 de 24</span></div><span></span></div>
+  <div class="prog"><i style="flex:40"><b style="width:100%"></b></i><i style="flex:45"><b style="width:100%"></b></i><i style="flex:24"><b style="width:75%"></b></i></div>
+  <div class="tr">
+    <svg class="big" viewBox="0 0 24 24"><circle cx="12" cy="8" r="5"/><circle cx="8.2" cy="14.6" r="5"/><circle cx="15.8" cy="14.6" r="5" stroke-dasharray="1.6 1.4"/></svg>
+    <span class="badge">Ahora, al revés</span>
+    <h2 class="disp">Elige lo que menos atiendes</h2>
+    <p>En las 6 preguntas siguientes no buscamos lo que haces, sino lo que se te queda descuidado sin darte cuenta.</p>
+    <p class="m">6 preguntas · unos 2 min</p>
+  </div>
+  <div class="bar"><span></span><button class="btn pri">Entendido</button></div>
+</div><figcaption>3 · Transición antes de un bloque que cambia las reglas<span>Lo mismo antes de «estrés», de los desempates y del ala, y al empezar cada parte.</span></figcaption></figure>
+
+<!-- 4 · Pregunta en bloque especial, oscuro -->
+<figure><div class="phone dark">
+  <div class="appbar"><button class="ib" aria-label="Atrás"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+    <div class="where"><svg class="em" viewBox="0 0 24 24"><circle cx="12" cy="8" r="5"/><circle cx="8.2" cy="14.6" r="5"/><circle cx="15.8" cy="14.6" r="5"/></svg><b>Instintos</b><span>19 de 24</span></div>
+    <button class="ib" aria-label="Ayuda"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 0 1 4.8 1c0 1.7-2.3 2-2.3 3.5"/><path d="M12 17.2v.1"/></svg></button></div>
+  <div class="prog"><i style="flex:40"><b style="width:100%"></b></i><i style="flex:45"><b style="width:100%"></b></i><i style="flex:24"><b style="width:79%"></b></i></div>
+  <p class="left">Te quedan unos 3 min</p>
+  <div class="q">
+    <div class="aviso"><svg viewBox="0 0 24 24"><path d="M12 4 21 19H3Z"/><path d="M12 10v4"/><path d="M12 16.8v.1"/></svg><span>Al revés: elige lo que <b>menos</b> atiendes</span></div>
+    <p class="stmt">¿Qué se te suele quedar más descuidado?</p>
+    <div class="opts">
+      <button class="op"><span class="lt">A</span><span>Los compromisos sociales: cumpleaños, grupos, mantener el contacto.</span><span></span></button>
+      <button class="op"><span class="lt">B</span><span>La chispa: mis relaciones se quedan en algo cómodo pero poco intenso.</span><span></span></button>
+      <button class="op"><span class="lt">C</span><span>Lo práctico: salud, dinero o casa, que dejo para luego.</span><span></span></button>
+    </div>
+  </div>
+  <div class="bar"><button class="btn ghost">Ninguna encaja</button><button class="btn pri" disabled>Siguiente →</button></div>
+</div><figcaption>4 · Bloque «punto ciego» en modo oscuro<span>El aviso amarillo se queda durante todo el bloque. En desempates y preferencias, «Ninguna encaja».</span></figcaption></figure>
+
+<!-- 5 · Resultado parcial -->
+<figure><div class="phone">
+  <div class="part">
+    <p class="k" style="font-size:14px">Parte 1 de 3 terminada</p>
+    <p class="disp code">INTP</p>
+    <p class="nm">El pensador</p>
+    <span class="conf"><i></i>Confianza media · 52 %</span>
+    <p class="alt" style="font-size:14px">El segundo más probable es ISTP (15 %)</p>
+  </div>
+  <div class="sec">
+    <p class="h3">Cada letra por separado</p>
+    <div class="lets">
+      <div class="let"><b class="disp">I</b><div class="mini"><i style="width:80%"></i></div><small>80 %</small></div>
+      <div class="let"><b class="disp">N</b><div class="mini"><i style="width:76%"></i></div><small>76 %</small></div>
+      <div class="let"><b class="disp">T</b><div class="mini"><i style="width:93%"></i></div><small>93 %</small></div>
+      <div class="let"><b class="disp">P</b><div class="mini"><i style="width:83%"></i></div><small>83 %</small></div>
+    </div>
+    <p class="sm">Cada letra sale clara; la duda está en la combinación, sobre todo entre N y S.</p>
+    <p style="font-size:16px">Curiosidad intelectual en estado puro. Te encanta entender cómo funcionan las cosas, desmontar ideas y construir tus propios modelos lógicos.</p>
+  </div>
+  <div class="bar" style="flex-direction:column;align-items:stretch;gap:8px"><button class="btn pri full">Seguir con el eneagrama</button><button class="btn ghost">Parar aquí y seguir otro día</button></div>
+</div><figcaption>5 · Resultado al terminar una parte<span>Da un respiro, confirma que todo se ha guardado y anima a seguir.</span></figcaption></figure>
+
+<!-- 6 · Resumen + pestañas -->
+<figure><div class="phone">
+  <div class="field">
+    <h1 class="disp" style="font-size:28px;margin:0">Tu mapa de personalidad</h1>
+    <div class="cells">
+      <div class="cell"><span class="k">MBTI</span><span class="disp code">INTP</span><span class="nm">El pensador</span><span class="conf"><i></i>Media · 52 %</span><span class="alt">o ISTP (15 %)</span></div>
+      <div class="cell"><span class="k">Eneagrama</span><span class="disp code">6w5</span><span class="nm">El leal, ala 5</span><span class="conf"><i></i>Media · 68 %</span><span class="alt">o 3 (22 %)</span></div>
+      <div class="cell"><span class="k">Instintos</span><span class="disp code">so/sx</span><span class="nm">Subtipo 6 social</span><span class="conf"><i></i>Baja · 45 %</span><span class="alt">o so/sp (34 %)</span></div>
+      <div class="cell"><span class="k">Tritipo</span><span class="disp code">613</span><span class="nm">Trabajo duro y sentido del deber</span></div>
+    </div>
+    <div class="acts"><button class="btn w">Compartir imagen</button><button class="btn">Copiar texto</button><button class="btn">Revisar respuestas</button></div>
+  </div>
+  <div class="tabs" role="tablist"><span class="on">MBTI</span><span>Eneagrama</span><span>Instintos</span><span>Tritipo</span></div>
+  <div class="sec">
+    <h2 class="disp">Tu tipo más probable es INTP</h2>
+    <p class="sm">Temperamento racional (NT) · <u>Ti</u> dominante, <u>Ne</u> auxiliar</p>
+  </div>
+</div><figcaption>6 · Resumen y pestañas<span>El póster con la confianza en palabras y, debajo, una pestaña por sistema que empieza por el título.</span></figcaption></figure>
+
+<!-- 7 · Vista de empate -->
+<figure><div class="phone">
+  <div class="tabs" style="padding-top:8px"><span>MBTI</span><span>Eneagrama</span><span class="on">Instintos</span><span>Tritipo</span></div>
+  <div class="sec">
+    <h2 class="disp">Tus instintos están entre dos órdenes</h2>
+    <p class="sm">Los dos empiezan por social. Lee qué cambia y quédate con el que describa mejor lo que haces cuando nadie te mira.</p>
+    <div class="tie">
+      <div class="cols">
+        <div><span class="mark">Más probable</span><b class="disp tt">so/sx</b><span class="pp">45 %</span>
+          <p class="rw"><small>Segundo: sexual</small>Le pone chispa a tu vida: buscas intensidad y conexión profunda cuando algo te importa.</p>
+          <p class="rw"><small>Punto ciego: lo práctico</small>Puedes descuidar tu salud, tu descanso o tu dinero.</p>
+          <button class="btn">Me reconozco más en este</button></div>
+        <div><span class="mark" style="visibility:hidden">·</span><b class="disp tt">so/sp</b><span class="pp">34 %</span>
+          <p class="rw"><small>Segundo: autoconservación</small>Te da una base práctica: cuidas los recursos y el bienestar.</p>
+          <p class="rw"><small>Punto ciego: la intensidad</small>Puedes dejar la pasión y la química uno a uno en segundo plano.</p>
+          <button class="btn">Me reconozco más en este</button></div>
+      </div>
+    </div>
+    <p class="sm">Elegir no cambia los porcentajes: marca cuál tomar como tuyo en el resto del mapa (subtipo y tritipo incluidos). Puedes deshacerlo.</p>
+  </div>
+</div><figcaption>7 · Vista de empate con elección propia<span>Aparece cuando el primero no llega al 60 % o no dobla al segundo. Ejemplo con tus instintos.</span></figcaption></figure>
+
+<!-- 8 · Escritorio -->
+<figure><div class="desk">
+  <div class="appbar"><button class="ib" aria-label="Atrás"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+    <div class="where"><svg class="em" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 3 19.8 16.5H4.2Z"/><path d="M17.8 5.1 6.2 18.9 20.9 13.6 3.1 13.6 17.8 18.9 6.2 5.1Z" stroke-width="1"/></svg><b>Eneagrama</b><span>7 de 45</span></div>
+    <button class="ib" aria-label="Ayuda"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 0 1 4.8 1c0 1.7-2.3 2-2.3 3.5"/><path d="M12 17.2v.1"/></svg></button></div>
+  <div class="prog"><i style="flex:40"><b style="width:100%"></b></i><i style="flex:45"><b style="width:15%"></b></i><i style="flex:24"></i></div>
+  <p class="left">Te quedan unos 21 min</p>
+  <div class="q">
+    <p class="ctx">Cómo vas a por lo que quieres.</p>
+    <p class="stmt">En las cenas o reuniones de grupo, normalmente…</p>
+    <div class="opts">
+      <button class="op"><span class="lt">A</span><span>Observo desde un segundo plano y participo cuando tengo algo que aportar.</span><span></span></button>
+      <button class="op sel"><span class="lt"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span>Estoy pendiente de que todo vaya bien y de echar una mano.</span><span></span><span class="timer" style="width:35%"></span></button>
+      <button class="op"><span class="lt">C</span><span>Ocupo bastante espacio: hablo, propongo, se me nota.</span><span></span></button>
+    </div>
+    <div class="bar"><button class="btn ghost">No me ha pasado</button><button class="btn pri">Siguiente →</button></div>
+    <p class="kbd">Teclas: <kbd>A</kbd>–<kbd>C</kbd> o <kbd>1</kbd>–<kbd>3</kbd> elegir · <kbd>Intro</kbd> siguiente · <kbd>←</kbd> atrás · <kbd>?</kbd> ayuda</p>
+  </div>
+</div><figcaption>8 · Pregunta en un portátil<span>Una columna de 680 px centrada; desde 900 px de ancho, los botones van justo debajo de las opciones. Letras y números sirven de atajos.</span></figcaption></figure>
+
+</div></div>
+</body>
+</html>
