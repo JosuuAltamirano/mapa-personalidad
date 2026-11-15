@@ -54,8 +54,6 @@ const TEXTOS = {
     anuncioTambien: 'También: {texto}',
     anuncioQuitada: 'Quitada: {texto}',
     teclas: 'Teclas: A–D o 1–4 para elegir · Intro, siguiente · ←, atrás · ?, ayuda',
-    revisando: 'Estás revisando: cambia lo que quieras y pasa con «Siguiente».',
-    verResultados: 'Ver resultados',
     progreso: 'Progreso: {n} de {m} preguntas contestadas',
     sinGuardar: 'Tu navegador no deja guardar el progreso: si cierras o recargas la página, se perderán tus respuestas.'
   },
@@ -97,7 +95,9 @@ const TEXTOS = {
     seguir: {mbti: 'Seguir con el eneagrama', enea: 'Seguir con los instintos', inst: 'Ver tu mapa completo'},
     luego: 'Tu tritipo y tu subtipo saldrán al final, porque necesitan las tres partes.',
     parar: 'Parar aquí y seguir otro día',
-    parado: 'Guardado. Cuando vuelvas, seguirás por aquí.'
+    parado: 'Guardado. Cuando vuelvas, seguirás por aquí.',
+    confianza: 'Confianza {nivel} · {p} %',
+    tipo: {mbti: 'Tu tipo más probable', enea: 'Tu eneatipo más probable'}
   },
 
   resultados: {
@@ -126,7 +126,33 @@ const TEXTOS = {
     letras: 'Cada letra por separado',
     letraDudosa: 'Letra dudosa: por separado, {otra} es algo más probable ({p} %).',
     letrasClaras: 'Cada letra sale clara; la duda está en la combinación.',
-    instFigura: 'Tamaño según tu orden: el más grande es el dominante y el de borde discontinuo, tu punto ciego.',
+    letrasClarasEntre: 'Cada letra sale clara; la duda está en la combinación, sobre todo entre {a} y {b}.',
+    pestanasNombre: 'Resultados por sistema',
+    // Subtítulos y bloques de cada panel. [[texto|Término]] marca un término del glosario.
+    h3: {
+      tipos: 'Los cinco tipos más probables', decides: 'Cómo decides', percibes: 'Cómo percibes',
+      funciones: 'Tus funciones, en orden', fortalezas: 'Fortalezas', retos: 'Tus retos',
+      eneatipos: 'Los nueve eneatipos', grupos: 'Tu perfil por grupos', ordenes: 'Los seis órdenes', tipo: 'Tu tipo'
+    },
+    funcionesUso: 'Porcentaje de veces que elegiste cada función. Energía: {p} % de respuestas de extraversión.',
+    funcionesAyuda: 'Las cuatro [[funciones cognitivas|Funciones cognitivas]] de tu tipo, de la que más usas a la que menos.',
+    gruposAyuda: 'En rosa, el grupo que corresponde a tu eneatipo.',
+    ala: 'Tu [[ala|Ala]] {w} le añade {texto}.',
+    datos: {deseo: 'Deseo básico', miedo: 'Miedo básico', pasion: 'Pasión', virtud: 'Virtud', reto: 'Tu reto', centro: '[[Centro]]', crecimiento: 'En [[crecimiento|Crecimiento]]', estres: 'En [[estrés|Estrés]]', hacia: 'Hacia el {t}: {texto}'},
+    leyenda: {crecimiento: '[[Crecimiento]]: hacia el {t}', estres: '[[Estrés]]: hacia el {t}'},
+    instCartas: ['[[Dominante]]', 'Secundario', '[[Punto ciego]]'],
+    subtipo: '[[Subtipo]]',
+    subtipoTitulo: 'Tu subtipo es {tipo}: {nombre}',
+    contratipo: '[[Contratipo|Contratipo]]',
+    contratipoNota: 'Un contratipo va a contracorriente de la pasión de su tipo; por eso a veces cuesta reconocerse en la descripción general.',
+    naranjo: 'Nombres de subtipos según Claudio Naranjo.',
+    triCartas: ['Núcleo', 'Segundo', 'Tercero'],
+    tuEneatipo: 'Tu eneatipo',
+    elegidoPct: 'Elegido el {p} % de las veces en su centro',
+    triExplica: 'El [[tritipo|Tritipo]] junta tu tipo más fuerte de cada [[centro|Centro]]: instinto, corazón y cabeza. El primero es tu eneatipo; los otros dos van ordenados por lo claros que han salido en las preguntas de motivación.',
+    anuncioElegido: 'Elegido por ti: {tipo}. Tu mapa se ha actualizado.',
+    anuncioDeshecho: 'Vuelves al resultado del test: {tipo}.',
+    instFigura: 'Tamaño según tu orden de [[instintos|Instintos]]: el más grande es el [[dominante|Dominante]] y el de borde discontinuo, tu [[punto ciego|Punto ciego]].',
     instDominante: 'Probabilidad de que sea tu dominante: {p} %',
     empate: {
       titulo: {mbti: 'Tu MBTI está entre dos tipos', enea: 'Tu eneatipo está entre dos tipos', inst: 'Tus instintos están entre dos órdenes'},
@@ -134,7 +160,10 @@ const TEXTOS = {
       masProbable: 'Más probable',
       elegir: 'Me reconozco más en este',
       elegido: 'Elegido por ti',
-      nota: 'Elegir no cambia los porcentajes: marca cuál tomar como tuyo en el resto del mapa (subtipo y tritipo incluidos). Puedes deshacerlo.'
+      nota: 'Elegir no cambia los porcentajes: marca cuál tomar como tuyo en el resto del mapa (subtipo y tritipo incluidos). Puedes deshacerlo.',
+      mismoDominante: 'Los dos empiezan por {ins}.',
+      filas: {dominante: 'Dominante: {f}', auxiliar: 'Auxiliar: {f}', como: 'Cómo es', segundo: 'Segundo: {x}', ciego: 'Punto ciego: {x}'},
+      ciego: {sp: 'lo práctico', so: 'lo social', sx: 'la intensidad'}
     },
     repetirPregunta: '¿Repetir el test? Tus respuestas se borrarán; este resultado se guardará en tu historial.',
     repetirSi: 'Sí, repetir',
@@ -147,21 +176,27 @@ const TEXTOS = {
     sin: 'Sin contestar',
     generada: {TBF: 'Desempate', TBEI: 'Desempate', TBE: 'Desempate', TBI: 'Desempate', WG: 'Ala'},
     verResultados: 'Ver resultados',
-    nuevas: 'Tus cambios han abierto preguntas nuevas de desempate. Contéstalas y verás tu mapa actualizado.'
+    nuevas: 'Tus cambios han abierto preguntas nuevas de desempate. Contéstalas y verás tu mapa actualizado.',
+    pendientes: 'Te queda alguna pregunta sin contestar. Contéstala y verás tu mapa actualizado.',
+    tambien: 'También: {l}'
   },
+
+  glosario: {cerrar: 'Cerrar'},
 
   compartir: {
     pie: 'Tu mapa de personalidad',
-    archivo: 'mi-mapa-de-personalidad.png'
+    archivo: 'mi-mapa-de-personalidad.png',
+    descargada: 'Imagen descargada',
+    error: 'No se ha podido crear la imagen'
   },
 
   metodo: {
     titulo: 'Cómo se calcula y qué no es este test',
     parrafos: [
-      'Para cada tipo posible, el test estima la probabilidad de que alguien así diera tus respuestas. Los porcentajes están calibrados para que signifiquen lo que dicen: de cada 100 resultados con un 70 %, unos 70 aciertan.',
-      'Si los dos resultados más probables quedan cerca, el test añade preguntas de desempate.',
+      'Para cada tipo posible, el test estima la [[probabilidad|Probabilidad]] de que alguien así diera tus respuestas. Los porcentajes están calibrados para que signifiquen lo que dicen: de cada 100 resultados con un 70 %, unos 70 aciertan.',
+      'Si los dos resultados más probables quedan cerca, el test añade preguntas de [[desempate|Desempate]].',
       'En simulaciones con decenas de miles de personas virtuales acierta el tipo MBTI un 63 % de las veces (77 % con desempate), el eneatipo un 87 % (91 %) y el instinto dominante un 87 %. Son cifras de simulación: con personas reales dependen de lo bien que funcione cada pregunta.',
-      'Es un test de autoconocimiento, no un diagnóstico. No es el MBTI® oficial de The Myers-Briggs Company ni una prueba clínica.',
+      'Es un test de autoconocimiento, no un diagnóstico. No es el [[MBTI]]® oficial de The Myers-Briggs Company ni una prueba clínica.',
       'Los grupos del eneagrama siguen a Don Riso y Russ Hudson; los subtipos, a Claudio Naranjo; el concepto de tritipo es de Katherine Chernick Fauvre.',
       'Si algo no te encaja, lee también los resultados que han quedado cerca.'
     ]

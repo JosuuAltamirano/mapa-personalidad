@@ -23,10 +23,20 @@ const view = () => page.locator('#app').getAttribute('data-view');
 ok(await view() === 'entrada', 'empieza en la entrada');
 await page.click('[data-act=start]');
 
-let n = 0, fit = 0, qs = 0, trans = [], headerMax = 0;
+let n = 0, fit = 0, qs = 0, trans = [], parts = [], headerMax = 0;
 while (n++ < 400) {
   const v = await view();
   if (v === 'res') break;
+  if (v === 'parcial') {   // resultado al terminar el MBTI y el eneagrama
+    parts.push(await page.locator('#pvT').textContent());
+    ok(await page.evaluate(() => document.activeElement.id) === 'pvT', 'foco en el resultado parcial');
+    if (parts.length === 1) {
+      await page.click('[data-act=pstop]');
+      ok((await page.locator('#pmsg').textContent()).startsWith('Guardado'), '«Parar aquí» confirma que está guardado');
+    }
+    await page.click('[data-act=pcont]');
+    continue;
+  }
   if (v === 'transicion') {
     trans.push(await page.locator('#trt').textContent());
     ok(await page.evaluate(() => document.activeElement.id) === 'trt', 'foco en el título de la transición');
@@ -53,7 +63,11 @@ while (n++ < 400) {
 }
 console.log(`Preguntas: ${qs} · encajan sin desplazarse: ${fit} (${Math.round(fit / qs * 100)} %) · cabecera máx.: ${headerMax.toFixed(0)} px`);
 console.log('Transiciones:', trans.join(' | '));
+console.log('Resultados parciales:', parts.join(' | '));
 ok(await view() === 'res', 'llega a los resultados');
+ok(parts.length === 2, 'un resultado parcial tras el MBTI y otro tras el eneagrama');
+ok(await page.evaluate(() => document.activeElement.tagName) === 'H1', 'foco en el título del póster');
+ok(await page.locator('[role=tab]').count() === 4, 'cuatro pestañas');
 ok(fit / qs >= .9, 'al menos el 90 % de preguntas caben');
 ok(headerMax <= 100, 'cabecera de 100 px como máximo');
 ok(!errs.length, 'errores en consola: ' + errs.join('; '));
