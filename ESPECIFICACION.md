@@ -1,8 +1,8 @@
 # Tu mapa de personalidad · Especificación del rediseño
 
-Versión 3 · 15 de noviembre de 2026
+Versión 4 · 16 de noviembre de 2026 (nueva dirección visual: «Diario»)
 
-**En una frase:** rehacer la interfaz del test como página web estática con la dirección «del cuaderno al póster», sin tocar el cálculo, en tres prioridades con criterios de aceptación comprobables.
+**En una frase:** rehacer la interfaz del test como página web estática con la dirección visual «Diario», sin tocar el cálculo, en tres prioridades con criterios de aceptación comprobables.
 
 ---
 
@@ -19,7 +19,7 @@ Versión 3 · 15 de noviembre de 2026
 | `base/fonts/` | Archivo variable (latín) autoalojada y su licencia OFL | No |
 | `tests/run.mjs` | Pruebas del cálculo: `node tests/run.mjs` | No (solo ampliar) |
 | `tests/vectors.json`, `tests/estado-guardado.json` | Resultados esperados y un estado real guardado | No |
-| `bocetos/` | Prototipo estático (`prototipo.html`) y capturas de 8 pantallas | Referencia visual |
+| `bocetos/` | Capturas de la dirección actual, «Diario» (`diario-*.png`), y el prototipo y las 8 pantallas de la dirección anterior | Referencia visual |
 | `referencia/` | Capturas de la versión actual | Referencia de lo que se sustituye |
 
 La base funciona tal cual: abre `base/index.html` o sirve la carpeta con `python3 -m http.server` y entra en `/base/`. Es la misma página que está publicada ahora, dividida en archivos y con el modelo ampliado; da resultados idénticos (comprobado en cuatro recorridos completos y con el estado guardado).
@@ -104,75 +104,78 @@ Las descripciones están en `data.js`: `T16`, `TEMP`, `FN`, `FPOS`, `E9`, `WING`
 
 ---
 
-## 4. Sistema visual: del cuaderno al póster
+## 4. Sistema visual: «Diario»
 
-**Idea.** Dos momentos con una sola identidad.
-- **Mientras respondes, un cuaderno:** papel cálido, aire, una sola tinta y nada que distraiga de pensar en ti.
-- **En los resultados, un póster:** campo azul y códigos enormes con la sombra rosa desplazada, para reconocerse y compartir.
+**Idea.** Un cuaderno que se rellena contigo. Tinta sobre papel, una serif editorial y lo tuyo marcado con rotulador, como subrayarías lo que te resuena.
+- **Mientras respondes:** renglones en vez de cajas, aire y nada que distraiga de pensar en ti.
+- **En los resultados, tu retrato:** una página tipográfica con los códigos grandes y marcados con rotulador, con matices: es lo más probable, no una etiqueta cerrada.
+
+**Qué debe sentir la persona:**
+- al entrar, curiosidad y confianza;
+- al responder, calma y foco;
+- al terminar cada parte, una pequeña recompensa;
+- al final, reconocimiento («esto soy yo») y ganas de compartirlo.
+
+La propuesta y sus alternativas descartadas («Conversación» y «Constelación») están en el lienzo «Direcciones visuales del test».
 
 ### Colores (contraste comprobado)
 
 | Token | Claro | Oscuro | Uso |
 |---|---|---|---|
-| `--paper` | `#faf7f2` | `#12142a` | Fondo |
-| `--surface` | `#ffffff` | `#1b1e3a` | Opciones y tarjetas |
-| `--ink` | `#1b1f3b` | `#f1eff8` | Texto y **tu elección**: la opción elegida va rellena de tinta |
-| `--ink2` | `#555a70` | `#b3b6cc` | Texto secundario (6,4:1 y 9,0:1) |
-| `--line` | `#82869c` | `#7a7fa3` | Bordes de controles (3,4:1 como mínimo) |
-| `--hair` | `#e6e1d8` | `#2c3052` | Separadores y pista del progreso (decorativo) |
-| `--blue` | `#0067a8` | `#6cb4f5` | **Avanzar**: botón principal, progreso y foco |
-| `--on-blue` | `#ffffff` | `#12142a` | Texto sobre azul |
-| `--bluet` | `#e1eef7` | `#1f3157` | Estado pulsado y fondos suaves |
-| `--pink` | `#f23d9f` | `#ff6fc0` | **Tu resultado**: marcas, barras y puntos |
-| `--pinkt` | `#ffe2f1` | `#3d1f3f` | Fondo de las tarjetas de tu resultado |
-| `--yel` | `#ffe14d` | `#f5d02e` | **Avisos**: cambios de regla y desempates |
-| `--yelt` | `#fff4bf` | `#3a3216` | Fondo de los avisos |
-| `--on-accent` | `#1b1f3b` | `#1b1f3b` | Texto sobre rosa o amarillo (siempre oscuro) |
-| `--field` | `#0067a8` | `#17406f` | Campo del póster; texto blanco (6,0:1 y 10,5:1) |
-| `--timer` | `#6cb4f5` | `#0067a8` | Barra del avance automático sobre la opción elegida |
+| `--paper` | `#fbf8f2` | `#16171d` | Fondo (papel) |
+| `--surface` | `#fffdf9` | `#1e2028` | Hojas sueltas: diálogos y burbuja del glosario |
+| `--ink` | `#1e2a44` | `#ece6da` | Texto y **avanzar**: botón principal, progreso y foco |
+| `--ink2` | `#5b6375` | `#b4b0a6` | Texto secundario (5,7:1 y 8,2:1) |
+| `--line` | `#858a99` | `#7d7a74` | Bordes de controles (3,2:1 y 4,2:1) |
+| `--hair` | `#e3dccf` | `#2d2f38` | Renglones y separadores (decorativo) |
+| `--press` | `#f1ebe0` | `#262832` | Fondo al pulsar o al pasar el ratón |
+| `--mark` | `#ffe07a` | `#f5d35e` | **Lo tuyo**: rotulador sobre la opción elegida, tus códigos, tus barras y tus puntos |
+| `--mark-line` | `#efbd2a` | `#c9a43a` | Subrayado de «también» |
+| `--mark-soft` | `#fff3c4` | `#3a3420` | Fondo de tus tarjetas (subtipo y núcleo del tritipo) |
+| `--on-mark` | `#1e2a44` | `#1e2a44` | Texto sobre rotulador (siempre oscuro) |
+| `--note`, `--note-line` | `#e7eef9`, `#9fb3d9` | `#222a3d`, `#4a5a82` | **Avisos**: notas al margen en los bloques que cambian las reglas |
 
 **Reglas:**
-- Un color, un significado. El rosa nunca marca progreso ni botones, el azul nunca marca el resultado y el amarillo solo avisa.
+- Un color, un significado. El amarillo solo marca lo tuyo; avanzar es tinta; los avisos son notas azules.
+- En oscuro, el rotulador de los códigos pasa a ser un subrayado grueso, porque la letra clara sobre amarillo no se leería. Sobre la opción elegida, en cambio, la letra se vuelve oscura (`--on-mark`).
 - Crecimiento y estrés se distinguen por el trazo, continuo y discontinuo y siempre en tinta, nunca por el color.
-- Se eliminan las mezclas de color en las figuras (`mix-blend-mode`).
+- Sin mezclas de color en las figuras (`mix-blend-mode`).
 
 **Tema:** claro u oscuro según `prefers-color-scheme`. Si existe `data-theme="light|dark"` en `<html>`, manda ese. Sin botón de tema.
 
 ### Tipografía
 
-Archivo variable (anchura 62–125 %, peso 100–900), ya incluida.
+Newsreader (serif, licencia OFL), autoalojada: solo los archivos latinos de la redonda (pesos 400–600) y de la cursiva, 82 KB. Para la interfaz, la letra del sistema.
 
-| Uso | Anchura | Peso | Tamaño |
-|---|---|---|---|
-| Títulos de entrada, transiciones y póster | 125 % | 800–850 | 30–40 px en móvil |
-| Códigos de resultado (INTP, 6w5…) | 125 % | 850 | 44–92 px, con `text-shadow: .05em .045em 0 var(--pink)` solo sobre el campo azul |
-| Enunciado | 100 % | 600–620 | 22 px en móvil y 28 px en escritorio; interlineado 1,25 |
-| Opciones | 100 % | 500 | 16 px; interlineado 1,4 |
-| Texto | 100 % | 400 | 16–17 px; interlineado 1,55; 66 caracteres por línea como máximo |
-| Secundario | 100 % | 500–600 | 13–15 px, nunca menos de 13 |
+| Uso | Letra | Tamaño |
+|---|---|---|
+| Títulos de entrada, transiciones y retrato | Newsreader 500; la última palabra del título, en cursiva | 34–46 px en móvil |
+| Códigos de resultado (INTP, 6w5…) | Newsreader 600, con el trazo de rotulador detrás | 30–96 px |
+| Enunciado | Newsreader 500 | 24 px en móvil y 30 px en escritorio; interlineado 1,24 |
+| Contexto del bloque, entradillas y nombres de tipo | Newsreader cursiva 400 | 16–24 px |
+| Opciones y texto | Letra del sistema 400 | 16 px; interlineado 1,45 |
+| Secundario | Letra del sistema 500 | 13–15 px, nunca menos de 13 |
 
 Sin mayúsculas espaciadas. Las etiquetas llevan mayúscula solo en la primera letra.
 
 ### Formas, espacio y emblemas
 
 - Escala de 4 px: 4, 8, 12, 16, 20, 24 y 32.
-- Radios: 14 px en las opciones, 16 px en las tarjetas; botones y chips, redondos.
-- Bordes de 1,5 px, y de 2 px en «también».
-- Sin sombras mientras se responde. La sombra dura rosa, solo en el póster.
+- Opciones, listas y datos son renglones de 1 px, sin cajas. La letra de cada opción va en cursiva («a.»).
+- **Opción elegida:** marca ✓ dibujada a mano y el texto marcado con rotulador.
+- **«También»:** subrayado grueso en `--mark-line` y la palabra «también» en cursiva.
+- **Botones** redondos: el principal, relleno de tinta; los secundarios, con borde de tinta.
+- Sin sombras, salvo en los diálogos y en la burbuja del glosario.
 - Objetivos táctiles de 44 px como mínimo, y de 48 px en los botones principales.
-- **Emblemas** de línea, de 24 px y trazo 1,6, en las transiciones a 96 px:
-  - MBTI: círculo partido, con una mitad tintada;
-  - eneagrama: círculo con la estrella de 9;
-  - instintos: tres círculos.
-
-  Los trazados están en `bocetos/prototipo.html`.
+- **Emblemas** de línea en tinta (círculo partido, estrella de 9 y tres círculos), a 24 px en la cabecera y a 96 px en las transiciones.
 
 ### Movimiento
 
 - Cambio de pregunta: 180 ms; aparece subiendo 8 px.
-- Selección: 120 ms.
-- Avance automático: barra de 1200 ms, lineal.
-- Con `prefers-reduced-motion: reduce`, nada se desplaza ni se anima; la barra del temporizador se muestra quieta.
+- Al elegir: el rotulador se traza sobre la opción (260 ms) y la ✓ aparece (160 ms).
+- Avance automático: una línea de tinta de 1200 ms bajo la opción elegida.
+- Al mostrar el resultado: los renglones entran escalonados, el rotulador se traza bajo los códigos y las barras crecen.
+- Con `prefers-reduced-motion: reduce`, nada se desplaza ni se anima; la línea del temporizador se queda quieta.
 
 ---
 
@@ -188,7 +191,7 @@ Las pantallas corresponden a los bocetos 1 a 8. Las medidas son para un móvil d
 - Aviso de privacidad y botón «Empezar».
 - Si ya hay progreso: «Continuar por la pregunta {n}» y «Empezar de cero». Este último pide confirmación en un `<dialog>`.
 - El enlace «Qué es y qué no es este test» abre `TEXTOS.metodo` en un diálogo.
-- Si el navegador no deja guardar, aviso amarillo (`TEXTOS.pregunta.sinGuardar`) aquí y en las preguntas.
+- Si el navegador no deja guardar, aviso (`TEXTOS.pregunta.sinGuardar`) aquí y en las preguntas.
 
 ### 5.2 Pregunta (bocetos 2, 4 y 8)
 
@@ -198,20 +201,20 @@ Las pantallas corresponden a los bocetos 1 a 8. Las medidas son para un móvil d
   - debajo, «Te quedan unos {min} min».
 - **Contexto:**
   - la instrucción del bloque (`instr(it)`) en `--ink2`, a 14 px;
-  - en los bloques C e IB, en los desempates y en el ala, va en su lugar un **aviso amarillo** fijo (`TEXTOS.transiciones.X.aviso`).
+  - en los bloques C e IB, en los desempates y en el ala, va en su lugar un **aviso** fijo, como nota al margen, (`TEXTOS.transiciones.X.aviso`).
 - **Enunciado:** `<h2 tabindex="-1">`.
 - **Opciones:** botones con `aria-pressed`, con la letra A–D en un círculo, el texto y un chip a la derecha.
   - **Sin elegir:** fondo `--surface` y borde `--line`.
   - **Principal:** relleno `--ink`, texto `--paper` y ✓ en el círculo. El chip «Principal» solo aparece si hay también.
   - **También:** borde de 2 px en `--ink` y chip «También».
-  - **Pulsado** (`:active`): fondo `--bluet`.
+  - **Pulsado** (`:active`): fondo `--press`.
   - **Táctil:**
     - sin resaltado del navegador (`-webkit-tap-highlight-color: transparent`);
     - hover solo con ratón (`@media (hover:hover) and (pointer:fine)`);
     - `touch-action: manipulation`.
 - **Barra inferior fija:**
   - a la izquierda, «No me ha pasado» o «Ninguna encaja», como botón de texto subrayado: registra `[]` y avanza;
-  - a la derecha, «Siguiente →» en azul, deshabilitado hasta elegir;
+  - a la derecha, «Siguiente →» en tinta, deshabilitado hasta elegir;
   - respeta `env(safe-area-inset-bottom)`;
   - el contenido deja un hueco debajo igual al alto de la barra, y `scroll-padding-bottom` con el mismo valor, para que el foco nunca quede tapado.
 - **Desde 900 px de ancho:** columna de 680 px centrada, enunciado de 28 px y botones justo debajo de las opciones (ya no fijos), con la pista de teclas debajo.
@@ -227,7 +230,7 @@ Las pantallas corresponden a los bocetos 1 a 8. Las medidas son para un móvil d
 ### 5.3 Avance automático
 
 - Activado por defecto. Se puede desactivar en la entrada o en la ayuda.
-- Cada toque que deje al menos una opción elegida arranca, o reinicia, un temporizador de 1200 ms (constante `AUTO_MS`). Mientras dura, la barra `--timer` se vacía en la opción principal. Al terminar, `next()`.
+- Cada toque que deje al menos una opción elegida arranca, o reinicia, un temporizador de 1200 ms (constante `AUTO_MS`). Mientras dura, una línea de tinta se vacía en la opción principal. Al terminar, `next()`.
 - Se cancela si no queda ninguna opción elegida, si se pulsa Atrás o Ayuda, o si la página se oculta (`visibilitychange`).
 - «Siguiente» avanza en el acto.
 - No actúa en la revisión ni en preguntas ya contestadas a las que se vuelve con Atrás. Ahí se avanza con «Siguiente».
@@ -236,7 +239,7 @@ Las pantallas corresponden a los bocetos 1 a 8. Las medidas son para un móvil d
 
 - Pantalla completa con:
   - emblema grande;
-  - insignia, amarilla en los bloques que cambian las reglas y de tinta en las partes;
+  - insignia: nota azul en los bloques que cambian las reglas y de tinta en las partes;
   - título, texto, meta y botón.
 - **Cuándo salen:**
   - antes de la primera pregunta de cada parte;
@@ -265,7 +268,7 @@ Esc lo cierra.
 ### 5.7 Resultado al terminar una parte (boceto 5)
 
 - **Al terminar el MBTI** (desempates incluidos):
-  - en el campo azul, el código en grande, el nombre, el chip de confianza («Confianza media · 52 %») y el segundo más probable;
+  - en una página de papel, el código en grande marcado con rotulador, el nombre, el chip de confianza («Confianza media · 52 %») y el segundo más probable;
   - debajo, cada letra por separado con su barra (`letterProbs`) y la nota que corresponda (ver 5.8);
   - y el primer párrafo de la descripción.
 - **Al terminar el eneagrama** (con desempate y ala): eneatipo con ala, confianza y segundo, más la nota de que el tritipo y el subtipo saldrán al final.
@@ -274,7 +277,7 @@ Esc lo cierra.
 
 ### 5.8 Resultados (bocetos 6 y 7)
 
-**Póster** (campo `--field`):
+**Retrato** (la cabecera de los resultados, en papel):
 - título;
 - fecha: «Hecho el 15 de noviembre de 2026», guardada en `S.doneAt` al terminar;
 - cuatro celdas (MBTI, eneagrama, instintos y tritipo), cada una con:
@@ -295,7 +298,7 @@ Esc lo cierra.
    - si la letra del tipo no pasa del 50 %, «Letra dudosa…»;
    - si todas pasan del 70 % pero el tipo no, «Cada letra sale clara; la duda está en la combinación».
 4. Barras de los 5 tipos más probables.
-5. Uso de funciones (cómo decides y cómo percibes), con las del tipo en rosa.
+5. Uso de funciones (cómo decides y cómo percibes), con las del tipo en tinta y su etiqueta marcada.
 6. Funciones en orden.
 7. Descripción, fortalezas y retos.
 
@@ -304,7 +307,7 @@ Esc lo cierra.
 2. Vista de empate si `unsure(PE)`.
 3. Estrella:
    - el área de cada punto, según su probabilidad;
-   - tu eneatipo en rosa y el ala con borde grueso de tinta;
+   - tu eneatipo en amarillo con borde de tinta y el ala con borde grueso de tinta;
    - flechas de crecimiento (trazo continuo) y de estrés (discontinuo) en tinta, con leyenda.
 4. Barras de los 9 tipos con el nombre completo: que no se corte, con una columna de etiqueta más ancha o en dos líneas.
 5. Descripción y ala.
@@ -315,24 +318,24 @@ Esc lo cierra.
 1. Título.
 2. Vista de empate si `unsure(PI)`.
 3. Figura de tres círculos **según el orden final**:
-   - el dominante, grande y en rosa;
-   - el segundo, mediano, en `--pinkt` con borde de tinta;
+   - el dominante, grande y en amarillo con borde de tinta;
+   - el segundo, mediano, en papel con borde de tinta;
    - el punto ciego, pequeño y con borde discontinuo;
    - dentro de cada uno, el código y «1.º», «2.º» o «3.º», sin porcentajes.
 4. Barras de los 6 órdenes.
 5. Tarjetas Dominante, Secundario y Punto ciego, cada una con «Probabilidad de que sea tu dominante: {p} %» (`R.dom`).
-6. Subtipo en una tarjeta `--pinkt` con borde de tinta, con la etiqueta «contratipo» si corresponde.
+6. Subtipo en una tarjeta `--mark-soft` con borde de tinta, con la etiqueta «contratipo» si corresponde.
 
 Se elimina la nota «Los círculos y el elegido…».
 
 **Panel Tritipo:**
 1. Título.
 2. Figura del eneagrama con el triángulo de tus tres tipos:
-   - triángulo con relleno `--pinkt` y borde de tinta;
-   - tu eneatipo en rosa y los otros dos con borde grueso de tinta;
+   - triángulo con relleno amarillo translúcido y borde de tinta;
+   - tu eneatipo en amarillo y los otros dos con borde grueso de tinta;
    - el resto, pequeños y en gris;
    - sin colores por centro.
-3. Tarjetas Núcleo, Segundo y Tercero, cada una con su centro; la del núcleo, en `--pinkt`.
+3. Tarjetas Núcleo, Segundo y Tercero, cada una con su centro; la del núcleo, en `--mark-soft`.
 4. Una explicación breve.
 
 **Vista de empate** (boceto 7):
@@ -353,13 +356,13 @@ Se elimina la nota «Los círculos y el elegido…».
 - Al tocarlos se abre una burbuja (en el móvil, una hoja inferior) con la definición de `GLOSARIO`.
 - Esc o tocar fuera la cierra.
 
-**Cómo se calcula:** una sección normal (papel y tinta) al final, con `TEXTOS.metodo`, enlazada desde el póster.
+**Cómo se calcula:** una sección normal (papel y tinta) al final, con `TEXTOS.metodo`, enlazada desde el retrato.
 
 **Copiar texto:** en la primera línea los cuatro códigos («INTP · 6w5 · so/sx · 613»), luego la fecha y después el detalle actual de `txt(R)`.
 
 **Compartir imagen** (prioridad 2):
-- Un `<canvas>` de 1080×1350 con campo azul, título, las cuatro celdas (código, nombre y confianza), la fecha y el pie `TEXTOS.compartir.pie`.
-- Antes de dibujar, espera a `document.fonts.load('850 120px Archivo')`.
+- Un `<canvas>` de 1080×1350 en papel, con el título, las cuatro celdas (código, nombre y confianza), la fecha y el pie `TEXTOS.compartir.pie`.
+- Antes de dibujar, espera a que carguen los pesos de Newsreader que usa (`document.fonts.load`).
 - Si `navigator.canShare({files})` lo permite, se comparte; si no, se descarga `mi-mapa-de-personalidad.png`.
 
 **Pie:** «Repetir el test», con un diálogo de confirmación (`TEXTOS.resultados.repetirPregunta`).
@@ -380,7 +383,7 @@ Se elimina la nota «Los círculos y el elegido…».
 
 ### 5.10 Guardado y errores
 
-- **Al arrancar,** probar `localStorage` escribiendo y borrando una clave de prueba dentro de un try/catch. Si falla, aviso amarillo persistente.
+- **Al arrancar,** probar `localStorage` escribiendo y borrando una clave de prueba dentro de un try/catch. Si falla, aviso persistente.
 - **Estado ampliado**, todo opcional y con valores por defecto: `prefs: {auto: true, keys: true}`, `seen: {}`, `choice: {}`, `pace: []` y `doneAt` (fecha ISO).
 - Mantener las líneas de `window.claude?.hot`: no hacen nada fuera de claude.ai.
 - **Historial** (prioridad 3): al repetir el test, guardar `{fecha, mbti, enea, inst, tri}` en `mapa-personalidad-historial` y mostrar en los resultados «La otra vez: …».
@@ -399,10 +402,10 @@ Se elimina la nota «Los círculos y el elegido…».
   - La tarjeta de la pregunta no es región viva.
 - **Foco:**
   - al cambiar de pregunta, incluso con Atrás o al saltar, va al enunciado;
-  - al llegar a los resultados, al `<h1>` del póster;
+  - al llegar a los resultados, al `<h1>` del retrato;
   - al abrir un diálogo, dentro de él;
   - al cerrarlo, al botón que lo abrió.
-- **Contorno de foco:** 3 px en `--blue`, separado 2 px; nunca tapado por la barra inferior.
+- **Contorno de foco:** 3 px en `--ink`, separado 2 px; nunca tapado por la barra inferior.
 - **Contraste:** el de los tokens de la sección 4 (texto a 4,5:1 como mínimo; controles y gráficos, a 3:1).
 - **Figuras:** las SVG llevan `role="img"` y un `aria-label` con el resultado real («Eneagrama: 6, 68 %; 3, 22 %…»).
 - **Sin desplazamiento horizontal** a 320 px ni con el zoom al 200 %.
@@ -433,7 +436,7 @@ Las teclas no hacen nada si el foco está en un campo de texto o si los atajos e
   - `index.html`, `styles.css`, `data.js`, `texts.js`, `model.js` y `app.js`;
   - la carpeta `fonts/`;
   - `favicon.svg`, con la estrella del eneagrama en tinta;
-  - `og.png`, de 1200×630: el póster con datos de ejemplo.
+  - `og.png`, de 1200×630: el retrato con datos de ejemplo.
 - **`<head>`:**
   - `<title>`;
   - `meta description`: «Test de personalidad gratuito a partir de situaciones reales: MBTI, eneagrama, instintos y tritipo. Sin registro: tus respuestas no salen de tu navegador.»;
@@ -444,7 +447,7 @@ Las teclas no hacen nada si el foco está en un campo de texto o si los atajos e
 - **Hosting:** cualquier hosting estático con HTTPS, por ejemplo GitHub Pages, Netlify o Cloudflare Pages (basta con arrastrar la carpeta). Sin servidor ni base de datos.
 - **Privacidad:** sin analíticas ni cookies. El almacenamiento local solo guarda el progreso de quien hace el test. Si algún día se añaden analíticas, conviene revisar antes los requisitos legales.
 - **Marca:** MBTI® es una marca registrada de The Myers-Briggs Company. Hay que mantener el aviso visible y no presentar el test como el oficial.
-- **Peso:** menos de 300 KB en total (la fuente pesa 90 KB y el JavaScript, unos 100 KB sin comprimir).
+- **Peso:** menos de 300 KB en total (las fuentes pesan 82 KB y el JavaScript, unos 160 KB sin comprimir).
 
 ---
 
@@ -460,14 +463,14 @@ Cada punto está terminado cuando cumple su criterio. La numeración es la de la
 | 2 | Cada pregunta en una pantalla (5.2) | En 360×740, enunciado y opciones visibles sin desplazarse en al menos el 90 % de las preguntas; la barra inferior, siempre visible; la cabecera ocupa 100 px como máximo |
 | 3 | Barra inferior fija (5.2) | Fija en el móvil y respetando la zona segura; desde 900 px, bajo las opciones |
 | 4 | Avance automático (5.3) | 1,2 s con barra; un segundo toque marca «también» y reinicia el tiempo; se puede desactivar; no actúa en la revisión ni al volver atrás |
-| 5 | Transiciones y avisos (5.4) | Salen una vez antes de cada parte, de los bloques C e IB, de cada desempate y del ala; el aviso amarillo se mantiene durante esos bloques |
+| 5 | Transiciones y avisos (5.4) | Salen una vez antes de cada parte, de los bloques C e IB, de cada desempate y del ala; el aviso se mantiene durante esos bloques |
 | 6 | Progreso honesto (5.5) | Segmentos por parte y minutos restantes; los desempates se anuncian con su número; ningún salto sin explicación |
 | 7 | Fallos táctiles | Ni recuadro del navegador al tocar, ni borde pegado tras quitar una opción, ni zoom por doble toque |
 | 8 | Teclado (7) | Se puede hacer el test entero sin ratón; Intro nunca desmarca; el foco nunca vuelve al principio de la página |
 | 9 | Lector de pantalla (6) | Solo se anuncian la pregunta nueva y los cambios de selección; el enunciado es un encabezado |
 | 10 | Contraste (4 y 6) | axe sin fallos de contraste; bordes de 3:1 o más |
 | 11 | Textos | «Ninguna encaja» en IB, desempates y ala; la ayuda ya no se repite en cada pregunta; «entre 109 y 124» donde se cuenten las preguntas |
-| 12 | Estética de cuaderno (4) | Coincide con los bocetos 1–4 y 8, en claro y en oscuro |
+| 12 | Estética «Diario» (4) | Coincide con la dirección A del lienzo de direcciones, en claro y en oscuro |
 | 13 | Guardado (5.10) | Un estado guardado de la versión actual se abre y continúa; aviso si no se puede guardar |
 | 14 | Revisión que recalcula | Al volver de revisar se llama a `reconcile()` y se llevan las preguntas nuevas |
 
@@ -484,8 +487,8 @@ Cada punto está terminado cuando cumple su criterio. La numeración es la de la
 | 21 | MBTI letra a letra | Letras con su probabilidad y nota de letra dudosa |
 | 22 | Colores coherentes | Mismas reglas en las cuatro figuras y ningún color por centro |
 | 23 | Glosario | Se pueden tocar todos los términos de `GLOSARIO` que aparecen en los resultados |
-| 24 | Estética de póster | Campo azul, códigos con sombra rosa y sin mezclas de color |
-| 25 | «Cómo se calcula» legible | Sección normal, enlazada desde el póster |
+| 24 | Estética de retrato | Papel y tinta, códigos marcados con rotulador y sin mezclas de color |
+| 25 | «Cómo se calcula» legible | Sección normal, enlazada desde el retrato |
 | 26 | Compartir imagen | Un PNG de 1080×1350 que se comparte o se descarga |
 | 27 | Detalles | Ningún nombre cortado; «30 %» con espacio; figuras con `aria-label` del resultado |
 
@@ -498,7 +501,7 @@ Cada punto está terminado cuando cumple su criterio. La numeración es la de la
 | 30 | Historial | Al repetir, se guarda el resultado anterior y se muestra qué ha cambiado |
 | 31 | Repetir una parte | Borra solo las respuestas de esa parte (y sus generadas) y vuelve a su primera pregunta |
 | 32 | Imprimir o PDF | Con `@media print` salen todas las pestañas, sin barras ni botones y con fondo blanco |
-| 33 | Fuente ligera | Solo se carga el archivo latino (90 KB) |
+| 33 | Fuente ligera | Solo se cargan los archivos latinos de Newsreader (82 KB) |
 | 34 | Comparar con otra persona (opcional) | Se pega el texto copiado de otra persona y se ven los dos mapas lado a lado |
 
 **Descartado:** un color por parte, porque choca con «un color, un significado», y el botón de modo oscuro.

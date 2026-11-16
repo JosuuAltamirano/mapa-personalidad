@@ -5,6 +5,7 @@ const TEXTOS = {
   titulo: 'Tu mapa de personalidad',
 
   entrada: {
+    kicker: 'Un cuaderno para conocerte',
     lede: 'Cuatro resultados a partir de cosas que has vivido: tu tipo MBTI, tu eneatipo con su ala, tu orden de instintos y tu tritipo.',
     partes: {
       mbti: {nombre: 'MBTI', que: 'Cómo piensas y decides', preguntas: 40, min: 13},
@@ -13,7 +14,7 @@ const TEXTOS = {
     },
     partesTotal: 'Entre 109 y 124 preguntas · unos 36 min en total',
     partesNota: 'Si dos resultados quedan muy cerca, saldrán unas preguntas más para desempatar (15 como mucho).',
-    partesTitulo: 'Las tres partes',
+    partesTitulo: 'Índice',
     preguntas: '{n} preguntas',
     minutos: '{n} min',
     comoTitulo: 'Cómo contestar',

@@ -14,25 +14,28 @@ await page.goto(URL);
 await page.evaluate(s => { localStorage.clear(); localStorage.setItem('mapa-personalidad-v2', s); }, OLD);
 await page.reload();
 const data = await page.evaluate(async () => {
-  await document.fonts.load('850 96px Archivo'); await document.fonts.load('500 26px Archivo');
+  await Promise.all(['600 96px Newsreader', '500 76px Newsreader', 'italic 400 76px Newsreader'].map(f => document.fonts.load(f)));
   const R = compute(), W = 1200, H = 630, M = 72, cv = document.createElement('canvas'); cv.width = W; cv.height = H;
-  const x = cv.getContext('2d'), FF = 'Archivo, system-ui, sans-serif';
-  const font = (w, s, wide) => { x.font = `${w} ${s}px ${FF}`; if ('fontStretch' in x) x.fontStretch = wide ? 'expanded' : 'normal'; };
+  const x = cv.getContext('2d'), PAPER = '#fbf8f2', INK = '#1e2a44', INK2 = '#5b6375', HAIR = '#e3dccf', MARK = '#ffe07a';
+  const SERIF = 'Newsreader, Georgia, serif', SANS = 'system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif';
+  const font = (f, s, w = 500, it = false) => { x.font = `${it ? 'italic ' : ''}${w} ${s}px ${f}`; };
   const wrap = (t, mw) => { const out = []; let l = ''; for (const w of t.split(' ')) { const s = l ? l + ' ' + w : w; if (l && x.measureText(s).width > mw) { out.push(l); l = w; } else l = s; } if (l) out.push(l); return out; };
-  x.fillStyle = '#0067a8'; x.fillRect(0, 0, W, H); x.fillStyle = '#fff';
-  let ts = 76; font(850, ts, true); while (x.measureText('Tu mapa de personalidad').width > W - 2 * M) { ts -= 2; font(850, ts, true); }
-  x.fillText('Tu mapa de personalidad', M, M + 70);
-  font(500, 28, false); x.fillText('MBTI, eneagrama, instintos y tritipo a partir de situaciones reales. Sin registro.', M, M + 130);
-  x.fillStyle = 'rgba(255,255,255,.55)'; x.fillRect(M, 256, W - 2 * M, 3);
+  x.fillStyle = PAPER; x.fillRect(0, 0, W, H);
+  x.fillStyle = INK2; font(SANS, 26); x.fillText('Test de personalidad gratuito · sin registro', M, 104);
+  x.fillStyle = INK; font(SERIF, 76); x.fillText('Tu mapa de ', M, 196);
+  const w1 = x.measureText('Tu mapa de ').width; font(SERIF, 76, 400, true); x.fillText('personalidad', M + w1, 196);
+  x.fillStyle = HAIR; x.fillRect(M, 262, W - 2 * M, 2);
   const tk = TRI[R.triKey], cells = [['MBTI', R.mbti, T16[R.mbti].n], ['Eneagrama', `${R.core}w${R.wing}`, `${lc(E9[R.core].n)}, ala ${R.wing}`],
     ['Instintos', R.stack.slice(0, 2).join('/'), `Subtipo ${R.core} ${INSN[R.stack[0]].split(' ')[0]}`], ['Tritipo', R.tri.map(t => t.t).join(''), tk.slice(0, tk.indexOf(':'))]];
-  const cw = (W - 2 * M - 3 * 28) / 4;
+  const cw = (W - 2 * M - 3 * 32) / 4;
   cells.forEach(([lab, code, name], i) => {
-    const cx = M + i * (cw + 28); let cy = 326;
-    x.fillStyle = '#fff'; font(500, 26, false); x.fillText(lab, cx, cy);
-    let s = 96; font(850, s, true); while (x.measureText(code).width > cw - 6 && s > 40) { s -= 4; font(850, s, true); }
-    cy += 22 + 96 * .9; x.fillStyle = '#f23d9f'; x.fillText(code, cx + s * .05, cy + s * .045); x.fillStyle = '#fff'; x.fillText(code, cx, cy);
-    font(500, 24, false); cy += 12; for (const l of wrap(name, cw).slice(0, 2)) { cy += 32; x.fillText(l, cx, cy); }
+    const cx = M + i * (cw + 32);
+    x.fillStyle = INK2; font(SANS, 24); x.fillText(lab, cx, 322);
+    let s = 92; font(SERIF, s, 600); while (x.measureText(code).width > cw - 10 && s > 40) { s -= 4; font(SERIF, s, 600); }
+    const base = 430, cwid = x.measureText(code).width;
+    x.fillStyle = MARK; x.fillRect(cx - s * .08, base - s * .4, cwid + s * .16, s * .36);
+    x.fillStyle = INK; x.fillText(code, cx, base);
+    font(SERIF, 26, 400, true); let y = 478; for (const l of wrap(name, cw).slice(0, 2)) { x.fillText(l, cx, y); y += 32; }
   });
   return cv.toDataURL('image/png');
 });

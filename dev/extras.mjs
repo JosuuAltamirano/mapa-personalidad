@@ -27,14 +27,14 @@ const newPage = async (opts = {}) => {
 };
 const loadOld = async p => { await p.goto(URL); await p.evaluate(s => { localStorage.clear(); localStorage.setItem('mapa-personalidad-v2', s); }, OLD); await p.reload(); };
 
-// 33 · Fuente ligera: un solo archivo, el latino
+// 33 · Fuente ligera: solo los archivos latinos de Newsreader
 const a = await newPage();
 const fonts = [];
 await a.goto(URL); await a.evaluate(s => { localStorage.clear(); localStorage.setItem('mapa-personalidad-v2', s); }, OLD);
 a.on('response', r => { if (/\.(woff2?|ttf|otf)(\?|$)/.test(r.url())) fonts.push(r.url()); });
 await a.reload();
 await a.waitForTimeout(300);
-ok(fonts.length === 1 && fonts[0].endsWith('/fonts/archivo-latin.woff2'), `solo se pide una vez fonts/archivo-latin.woff2 (${fonts.length})`);
+ok(fonts.length >= 1 && fonts.length === new Set(fonts).size && fonts.every(u => /\/fonts\/newsreader-latin(-italic)?\.woff2$/.test(u)), `solo se piden los archivos latinos de Newsreader, una vez cada uno (${fonts.map(u => u.split('/').pop()).join(', ')})`);
 
 // 28 · Animaciones al mostrar el resultado y al elegir
 ok(await a.evaluate(() => getComputedStyle(document.querySelector('.cell')).animationName) === 'subir', 'el póster entra con animación');

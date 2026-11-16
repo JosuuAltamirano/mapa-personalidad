@@ -29,10 +29,11 @@ const ICO={
   back:'<path d="M15 5l-7 7 7 7"/>',
   help:'<circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 0 1 4.8 1c0 1.7-2.3 2-2.3 3.5"/><path d="M12 17.2v.1"/>',
   warn:'<path d="M12 4 21 19H3Z"/><path d="M12 10v4"/><path d="M12 16.8v.1"/>',
-  check:'<path d="M5 12.5l4.5 4.5L19 7.5"/>',
+  check:'<path d="M4 13c2 1.6 3.5 3.4 5 5.5C11.5 12 15 7.5 20 4"/>',
   lock:'<rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>',
   arrow:'<path d="M5 12h14"/><path d="M13 6l6 6-6 6"/>'
 };
+const titulo=()=>T.titulo.replace(/(\S+)$/,'<em>$1</em>');   // «Tu mapa de <em>personalidad</em>»
 const aviso=html=>`<div class="aviso">${svg('',ICO.warn)}<span>${html}</span></div>`;
 
 // ======= Glosario =======
@@ -135,11 +136,12 @@ function showEntrada(focus,note){
   const E=T.entrada,D=T.dispositivo,started=answeredN()>0;
   const parts=PARTS.map(p=>{const x=E.partes[p];return`<li>${svg('em',EMB[p])}<span><b>${x.nombre}</b><small>${x.que}</small></span><span class="n">${fill(E.preguntas,{n:x.preguntas})}<br>${fill(E.minutos,{n:x.min})}</span></li>`}).join('');
   setView('entrada',`<div class="in enter">
-    <h1 class="disp" tabindex="-1">${T.titulo}</h1>
+    <p class="kick">${E.kicker}</p>
+    <h1 class="disp" tabindex="-1">${titulo()}</h1>
     <p class="lede">${E.lede}</p>
     ${note?`<p class="okmsg" role="status">${note}</p>`:''}
     ${CAN_SAVE?'':aviso(T.pregunta.sinGuardar)}
-    <section aria-labelledby="hPartes"><h2 class="sr" id="hPartes">${E.partesTitulo}</h2><ul class="parts">${parts}</ul>
+    <section aria-labelledby="hPartes"><h2 class="h3" id="hPartes">${E.partesTitulo}</h2><ul class="parts">${parts}</ul>
     <p class="small" style="margin-top:8px">${E.partesTotal}. ${E.partesNota}</p></section>
     <section aria-labelledby="hComo"><h2 class="h3" id="hComo">${E.comoTitulo}</h2><ol class="how">${E.como.map(x=>`<li>${x}</li>`).join('')}</ol></section>
     <label class="tog"><span><b>${E.auto}</b><small>${E.autoAyuda}</small></span><input type="checkbox" role="switch" class="sw" data-pref="auto"${S.prefs.auto?' checked':''}></label>
@@ -267,7 +269,7 @@ function showTrans(key){
   setView('transicion',`<div class="qv">${topBar(it)}
     <div class="tr enter">
       ${svg('big',emb)}
-      <span class="badge ${yel?'yel':'ink'}">${d.insignia}</span>
+      <span class="badge ${yel?'nota':'ink'}">${d.insignia}</span>
       <h2 class="disp" id="trt" tabindex="-1">${d.titulo}</h2>
       ${NOTE?aviso(NOTE):''}
       <p>${d.texto}</p>
@@ -440,7 +442,7 @@ function posterHTML(R,R0){
     !diff.length?H.igual:fill(diff.length>1||diff[0]==='inst'?H.cambiaN:H.cambia1,{lista:joinY(diff.map(k=>H.nombres[k]))})}</p>`;
   const tk=TRI[R.triKey];
   return`<header class="field poster" id="poster"><div class="w">
-    <h1 class="disp" tabindex="-1">${T.titulo}</h1>
+    <h1 class="disp" tabindex="-1">${titulo()}</h1>
     ${S.doneAt?`<p class="date">${fill(RS.fecha,{fecha:fecha(S.doneAt)})}</p>`:''}
     <ul class="cells">
       ${cell('mbti',R.mbti,T16[R.mbti].n,R0.PM,R0.mbti)}
@@ -622,44 +624,43 @@ function download(blob){
   setTimeout(()=>URL.revokeObjectURL(u),4000);
 }
 async function posterPNG(){
-  try{await document.fonts.load('850 120px Archivo');await document.fonts.load('500 34px Archivo')}catch(e){}
-  const R=compute(),R0=compute({}),RS=T.resultados,W=1080,H=1350,M=80,cv=document.createElement('canvas');cv.width=W;cv.height=H;
-  const x=cv.getContext('2d'),INK='#1b1f3b',PINK='#f23d9f',FF='Archivo, system-ui, sans-serif';
-  const font=(w,s,wide)=>{x.font=`${w} ${s}px ${FF}`;if('fontStretch' in x)x.fontStretch=wide?'expanded':'normal'};
-  const wrap=(t,mw)=>{const out=[];let l='';for(const w of t.split(' ')){const s=l?l+' '+w:w;if(l&&x.measureText(s).width>mw){out.push(l);l=w}else l=s}if(l)out.push(l);return out};
-  const rr=(px,py,w,h,r)=>{x.beginPath();x.moveTo(px+r,py);x.arcTo(px+w,py,px+w,py+h,r);x.arcTo(px+w,py+h,px,py+h,r);x.arcTo(px,py+h,px,py,r);x.arcTo(px,py,px+w,py,r);x.closePath()};
-  x.fillStyle='#0067a8';x.fillRect(0,0,W,H);x.textBaseline='alphabetic';
-  // Título y fecha
-  x.fillStyle='#fff';font(850,84,true);let y=M+70;
-  for(const l of wrap(T.titulo,W-2*M)){x.fillText(l,M,y);y+=88}
-  font(500,34,false);if(S.doneAt){x.fillText(fill(RS.fecha,{fecha:fecha(S.doneAt)}).replace(/ /g,' '),M,y+4);y+=34}
-  y+=34;x.fillStyle='rgba(255,255,255,.55)';x.fillRect(M,y,W-2*M,3);y+=56;
-  // Cuatro celdas en dos filas
-  const cw=(W-2*M-60)/2,tk=TRI[R.triKey];
-  const cells=[
-    ['mbti',R.mbti,T16[R.mbti].n,R0.PM],
+  try{await Promise.all(['600 200px Newsreader','500 84px Newsreader','italic 400 52px Newsreader'].map(f=>document.fonts.load(f)))}catch(e){}
+  const R=compute(),R0=compute({}),RS=T.resultados,W=1080,H=1350,M=88,cv=document.createElement('canvas');cv.width=W;cv.height=H;
+  const x=cv.getContext('2d'),PAPER='#fbf8f2',INK='#1e2a44',INK2='#5b6375',HAIR='#e3dccf',MARK='#ffe07a';
+  const SERIF='Newsreader, Georgia, serif',SANS='system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif';
+  const font=(f,s,w=500,it=false)=>{x.font=`${it?'italic ':''}${w} ${s}px ${f}`};
+  const nb=t=>t.replace(/ /g,' ');
+  // Código con su trazo de rotulador detrás, como en la página
+  const marked=(code,cx,base,s)=>{font(SERIF,s,600);const w=x.measureText(code).width;x.fillStyle=MARK;x.fillRect(cx-s*.08,base-s*.4,w+s*.16,s*.36);x.fillStyle=INK;x.fillText(code,cx,base)};
+  const conf=(sys,P)=>R.chosen[sys]?RS.elegidoPorTi:`${RS.confianza[confidence(P[0][1])]} · ${pc(P[0][1])} %`;
+  x.fillStyle=PAPER;x.fillRect(0,0,W,H);x.textBaseline='alphabetic';
+  // Cabecera: fecha y título
+  x.fillStyle=INK2;font(SANS,30);x.fillText(S.doneAt?nb(fill(RS.fecha,{fecha:fecha(S.doneAt)})):T.titulo,M,150);
+  const t=T.titulo.split(' '),last=t.pop();
+  x.fillStyle=INK;font(SERIF,84);x.fillText(t.join(' '),M,250);font(SERIF,84,400,true);x.fillText(last,M,334);
+  // MBTI en grande
+  x.fillStyle=INK2;font(SANS,30);x.fillText(RS.pestanas.mbti,M,410);
+  let s=220;font(SERIF,s,600);while(x.measureText(R.mbti).width>W-2*M&&s>120){s-=8;font(SERIF,s,600)}
+  marked(R.mbti,M,410+s*.86,s);
+  let y=410+s*.86+70;
+  x.fillStyle=INK;font(SERIF,52,400,true);x.fillText(T16[R.mbti].n,M,y);
+  x.fillStyle=INK2;font(SANS,30);x.fillText(conf('mbti',R0.PM),M,y+54);
+  // Los otros tres, en renglones
+  const rows=[
     ['enea',`${R.core}w${R.wing}`,`${eName(R.core)}, ala ${R.wing}`,R0.PE],
     ['inst',R.stack.slice(0,2).join('/'),`Subtipo ${R.core} ${INSN[R.stack[0]].split(' ')[0]}`,R0.PI],
-    ['tri',R.tri.map(t=>t.t).join(''),tk.slice(0,tk.indexOf(':')),null]];
-  const rowH=[0,0];
-  cells.forEach(([sys,code,name,P],i)=>{
-    const cx=M+(i%2)*(cw+60);let cy=y+(i>1?rowH[0]+56:0);const y0=cy;
-    x.fillStyle='#fff';font(500,32,false);cy+=32;x.fillText(RS.pestanas[sys],cx,cy);
-    let s=140;font(850,s,true);while(x.measureText(code).width>cw-8&&s>56){s-=4;font(850,s,true)}
-    cy+=s*.95;x.fillStyle=PINK;x.fillText(code,cx+s*.05,cy+s*.045);x.fillStyle='#fff';x.fillText(code,cx,cy);
-    font(500,34,false);cy+=20;for(const l of wrap(name,cw).slice(0,2)){cy+=42;x.fillText(l,cx,cy)}
-    if(P){
-      const lab=R.chosen[sys]?RS.elegidoPorTi:`${RS.confianza[confidence(P[0][1])]} · ${pc(P[0][1])} %`;
-      font(700,30,false);const tw=x.measureText(lab).width,ch=54;cy+=26;
-      x.fillStyle='#fff';rr(cx,cy,tw+70,ch,ch/2);x.fill();
-      x.fillStyle=PINK;x.beginPath();x.arc(cx+28,cy+ch/2,9,0,Math.PI*2);x.fill();
-      x.fillStyle=INK;x.fillText(lab,cx+48,cy+ch/2+11);cy+=ch;
-    }
-    rowH[i>1?1:0]=Math.max(rowH[i>1?1:0],cy-y0);
+    ['tri',R.tri.map(q=>q.t).join(''),TRI[R.triKey].slice(0,TRI[R.triKey].indexOf(':')),null]];
+  y=Math.max(y+104,780);
+  x.fillStyle=HAIR;x.fillRect(M,y,W-2*M,2);
+  rows.forEach(([sys,code,name,P])=>{
+    x.fillStyle=INK2;font(SANS,28);x.fillText(RS.pestanas[sys],M,y+62);
+    if(P){x.textAlign='right';x.fillText(conf(sys,P),W-M,y+62);x.textAlign='left'}
+    x.fillStyle=INK;font(SERIF,72,600);x.fillText(code,M+210,y+78);
+    font(SERIF,32,400,true);x.fillText(name,M+210,y+124);
+    y+=150;x.fillStyle=HAIR;x.fillRect(M,y,W-2*M,2);
   });
   // Pie
-  x.fillStyle='rgba(255,255,255,.55)';x.fillRect(M,H-M-64,W-2*M,3);
-  x.fillStyle='#fff';font(700,32,true);x.fillText(T.compartir.pie,M,H-M);
+  x.fillStyle=INK2;font(SERIF,30,400,true);x.fillText(T.compartir.pie,M,H-70);
   return new Promise((ok,ko)=>cv.toBlob(b=>b?ok(b):ko(new Error('toBlob')),'image/png'));
 }
 
